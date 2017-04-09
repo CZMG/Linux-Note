@@ -1,0 +1,52 @@
+系统用户
+/etc/passwd
+系统使用uid来表示用户名
+使用git表示组名
+uid=0是root
+uid从1到499都是系统用户，PAM模块会过滤500内的
+用户名：密码：uid：gid：注释：家目录：shell环境
+root:x:0:0:root:/root:/bin/bash
+===========================================
+密码文件
+/etc/shadow
+用户名：密码（sha-512+salt）:unix的纪元时（1970-1-1）：最少使用天数：最长使用天数：密码到期前的警告天数：最长不活跃时间（过期账号禁用）：失效时间
+root:$6$OmUfdlho2jMGPGrW$bAJiYSNmKNlzMCyUc7YAONlKtiX7.24uk.WAcosWQuAZY0cCmcmUDahTAZTslHDRXWpxEqqwSjBNSeslMNRAA0:17216:0:99999:7:::
+==========================================
+groups u1    查看u1所属组
+gpasswd -a u1 root    将u1用户加入root组
+			-d   u1 root    从root组删除u1
+id u1        查看u1用户的信息
+useradd -G u2 root   创建一个u2用户，并加入root组
+newgrp root    将当前用户在本shell内加入root组，退出则失效
+passwd  -S u1   查看u1的密码信息
+	-d u1   清空u1用户的密码
+	-u  u1       解锁u1用户账户
+	-U u1       锁定u1用户账户
+userdel jack     删除jack用户（但用户的信息不回删除）
+	-r    jack      彻底删除jack用户
+	
+
+/etc/default/useradd
+useradd -c "i am u1"    添加注释
+	-s  /bin/bash   指定登录环境
+	-d  /home/u2    指定家目录
+	-g  u2          指定组
+	-G  root        指定附属组
+	-u  1000        指定uid
+
+chage option username   修改某个用户的账户信息
+
+finger jack        查看某个用户的详细信息
+
+groupadd   xx
+groupdel   xx
+
+批量创建用户的方法：
+1、for循环添加：
+	例：[root@1 ~]# for i in `seq  1 10`
+			> do
+			> useradd user$i
+			> echo "redhat" | passwd --stdin user$i
+			> done
+（删除）userdel -r  user$i
+2、编写 /etc/passwd 

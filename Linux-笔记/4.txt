@@ -1,0 +1,58 @@
+/boot/grub/grub.conf
+	splashimage   -->设置grub背景
+	hiddenmenu  -->隐藏登录详细信息
+	设置grub登录密码：(一般不用，开机能看到家加密码)
+		grub-md5-crypt
+		输入密码
+		打开/boot/grub/grub.conf
+		password --md5 "**********"
+====================================================================
+RHEL7的启动过程
+systemd 取代了 sysV init
+cgroup   为每个进程分配一个cgroup，让互相不依赖的进程并行启动，减少开机时间。
+syslogd  记录系统日志，每个进程分配一个deamons
+systemd  使用target来控制系统服务的启动，systemd在/usr/lib/systemd。
+RHEL6中使用runlevel，7中用target替代
+每次第一个启动的通常是default.target
+
+对比两个系统的启动级别：
+0 -->poweroff.target 
+1 -->resuce.target/emergency（resuce.target修复不了，则使用emergency）
+2 -->multi-user.target 
+3 -->
+4 -->
+5 -->
+===========================================================================
+target的路径：/usr/lib/systemd/system
+主配置路径：/etc/systemd/system/default.target
+===========================================================================
+systemctl set-default multi-user.target   设置默认启动服务，下次启动生效。
+ststemd-analye time        查看开机各项的启动时间。
+systemctl isolate graphihcal.target    直接切换进入其他级别。
+systemctl list-units    查看当前已启动的服务。
+systemctl list-units --type=service 查看后缀为service的服务。
+systemctl is-active  sshd.service    查看服务是否启动。
+systemctl stop sshd.service      关闭某服务。
+==========================================================================
+修改grub.cfg来决定系统的启动顺序等需要修改/etc/default/grub，然后使用命令grub2-mkconfig -0 /boot/grub2/grub.cfg来更新grub.cfg的配置。
+如果是debain类的OS使用update-grub2来修改。
+
+先用grub2-set-default 1修改默认启动的内核（OS），在用  grub2-mkconfig来更新。
+===========================================================================================
+resuce模式  单用户模式    进入需要密码
+emergency模式  
+
+RHEL7第一种破解密码的方法： init=/bin/sh 
+Ctrl+x 引导进入
+进入sh2.4#
+此时输入passwd 是无法修改成功的
+sh2.4#mount -o remount,rw /
+mount是挂载，参数是-o是额外的选项，选项就是remount（重新挂载），rw表示权限
+sh2.4#touch /.autorelabel    创建这个文件的目的是为了让selinux自动打标签
+sh2.4#exec /sbin/init
+
+
+
+岗位：devops
+
+pupput
