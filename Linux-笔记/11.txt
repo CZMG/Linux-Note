@@ -50,3 +50,47 @@ groupdel   xx
 			> done
 （删除）userdel -r  user$i
 2、编写 /etc/passwd 
+添加用户：
+vim 1.txt
+  1 t1:x:502:502::/home/t1:/bin/bash
+  2 t2:x:503:503::/home/t2:/sbin/nologin
+  3 t3:x:504:504::/home/t3:/bin/bash
+newusers < 1.txt
+
+添加密码：
+pwconv
+pwunconv     取消shadow加密
+chpasswd < *.txt
+
+这种操作后用户不存在家目录，从/etc/skel中拷贝所有环境文件到每个用户的家目录。
+
+密码规则：
+root 
+禁止远程登录
+修改uid为1-499
+
+/etc/login.defs 
+/etc/pam.d/system-auth
+这两个文件可以设置用户登录的密码规则
+
+ 16 password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5
+ remember=5,设置5次之内设置的密码不能重复
+ 
+ 创建密码的规则
+ centos 7
+ vim 
+ /etc/security/pwquality.conf
+ minlen=8   最小长度
+ minclass=1  最小类别，表示密码中最小的字符类别是几个，比如大写字母算一个，小写字母算一个，特殊字符算一个。
+ maxrepeat=2
+ 密码中不允许出现连续的字符类别
+ lcredit=0      在新密码设置中最小包含几个小写字母
+ ucredit=0      在新密码设置中最小包含几个大写字母
+ dcredit=0      在新密码设置中最小包含几个数字
+ oocredit=0      在新密码设置中最小包含几个特殊字符
+ maxsequence=3   在新密码设置中不允许连续出现连续出现同类字符3个以上
+ difox=5        在新密码设置中不允许个上一个密码的相似度相同字符达到5个
+ gecoscheck=3     在新密码中密码的相同字符不能超过gecos信息的3个
+ 
+ chmod 700 /usr/bin/su     禁止其他用户使用su
+ ============================================
