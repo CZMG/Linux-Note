@@ -40,7 +40,8 @@ vim /etc/pam.d/sshd
 required
 当带有这个标记的模块只有全部通过验证才表示鉴定完毕。如果有不符合的，模块也不会返回信息。
 include   同时调用其他模块或脚本
-sufficient    模块一旦调试成功，PAM立即返回成功标志，不再继续optional,不论成功失败，都继续。（成功即终止）
+sufficient    模块一旦调试成功，PAM立即返回成功标志，不再继续。（成功即终止）
+optional,不论成功失败，都继续。
 requisite     失败即终止，其他和required一样
 
 /etc/pam.d       目录下存放了模块的所有环境文件
