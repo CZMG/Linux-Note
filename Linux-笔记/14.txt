@@ -4,8 +4,8 @@ NSA，美国国家安全局，和Fedora社区一起开发的
 DAC    自主访问控制，通过文件或者目录的属性来实现读取
 MAC    强制访问控制，核心思想：任何进行企图在SELinux中执行时，必须在安全配置策略中具有特点权限。
 
-MAC并不会取代DAC，它们可以并行云尊，通常执行dac权限，系统再查看是否有MAC限制。
-
+MAC并不会取代DAC，它们可以并行运行，通常执行dac权限，系统再查看是否有MAC限制。
+===============================================================================================================================
 SELinux最终目标：针对一个进程是否具有打开某些特定文件的权限
 SELinux工作模式：
 主体：进程、程序
@@ -29,7 +29,7 @@ SELinux工作模式：
 	类型：domain是程序；
 				type是文件；
 查看安全上下文：ls -Z
-							semanage fcontext -l |grep /etc/passwd
+				semanage fcontext -l |grep /etc/passwd
 
 SELinux的主配置文件：原文件/etc/selinux/config，软连接文件/etc/sysconfig/selinux
 
@@ -42,8 +42,26 @@ sestatus    查看selinux的状态
 getenforce   查看当前selinux的模式
 setenforce    设置selinux的模式   （这些配置都是临时有效，要想永久有效，需要修改配置文件）
 chcon -R -t 目录名/文件名      修改文件/目录的上下文
-	-R  --reference=目录/文件名      引用某个目录/文件的上下文
+	  -R  --reference=目录/文件名      引用某个目录/文件的上下文
 restorecon -R   目录/文件名    还原目录/文件的上下文
 
 实例：
 安装apache服务器，默认安装好后，首页路径在/var/www/html目录下
+==============================================================================================================
+修改sshd的默认端口，selinux在enforcing模式下，会发现标签的变化，然后阻止用户的这种行为。
+cat /var/log/audit/audit.log | grep AVC | tail -5   查看审计日志中关于AVC的信息。AVC是selinux机制中的一个策略服务器。
+systemctl status sshd      查看sshd服务当前的状态，如果端口修改，selinux开启的情况下，系统会报错。
+semanage prot -l       查看系统中所有端口的标签
+semanage port -l | grep 22    查看22端口的标签
+semanage port -a -t ssh_port_t -p tcp  2222  将sshd的端口改为2222
+============================================================================
+selinux的布尔值
+getsebool -a     查看系统中所有的服务的默认的bool值
+
+/selinux/booleans    RHEL6的selinux文档
+
+getsebool -a | grep sftpd_full_access     临时修改sftpd_full_access的bool值
+		-P    永久修改bool值
+
+system_config_selinux      selinux的图形化管理工具
+setroubleshoot             selinux的排故工具
