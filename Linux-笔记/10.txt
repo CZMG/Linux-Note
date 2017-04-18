@@ -1,4 +1,4 @@
-vim 
+﻿vim 
 vim   编辑器之神
 emacs 神的编辑器
 ================================================================
@@ -89,7 +89,6 @@ git 最好的版本控制系统
 [root@1 mygit]# cp /etc/passwd .
 [root@1 mygit]# git add passwd （告诉git仓库里多了个passwd文件）
 [root@1 mygit]# git commit -m "2017.3.30-1.0"（将仓库中的文件调教，-m为参数信息）
-	-a               直接commit,跳过add步骤
 [root@1 mygit]# git diff passwd 
 
 git remote add  名称（origin） 加入远程仓库

@@ -1,125 +1,125 @@
-RHEL7ÏÂ µÚ¶şÖÖÆÆ½ârootÃÜÂëµÄ·½Ê½£¨ÍÆ¼ö£©
-ÄÚºËĞÅÏ¢Î²²¿¼Ó   rd.break      
-mount -o remount,rw /sysroot/   ÖØĞÂ¹ÒÔØ²¢ÒªÇósysroot¿ÉÒÔ¶ÁĞ´
-chroot /sysroot/    ÇĞ»»¸ù
-passwd  ĞŞ¸ÄÃÜÂë
-load_policy -i   ¼ÓÔØselinux
-chcon -t shadow_t /etc/shadow   ĞŞ¸Äshadow µÄÉÏÏÂÎÄ
-touch ./autorelabel    ÖØ½¨selinux±êÇ©
+ï»¿RHEL7ä¸‹ ç¬¬äºŒç§ç ´è§£rootå¯†ç çš„æ–¹å¼ï¼ˆæ¨èï¼‰
+å†…æ ¸ä¿¡æ¯å°¾éƒ¨åŠ    rd.break      
+mount -o remount,rw /sysroot/   é‡æ–°æŒ‚è½½å¹¶è¦æ±‚sysrootå¯ä»¥è¯»å†™
+chroot /sysroot/    åˆ‡æ¢æ ¹
+passwd  ä¿®æ”¹å¯†ç 
+load_policy -i   åŠ è½½selinux
+chcon -t shadow_t /etc/shadow   ä¿®æ”¹shadow çš„ä¸Šä¸‹æ–‡
+touch ./autorelabel    é‡å»ºselinuxæ ‡ç­¾
 ================================================
-RHEL7ÖĞµÄgrubµÄĞŞ¸´
-Í¨¹ı¹âÅÌÒıµ¼
-chroot /mnt/sysimage  ÇĞ»»¸ù
-grub2-install /dev/sda   °²×°grub
+RHEL7ä¸­çš„grubçš„ä¿®å¤
+é€šè¿‡å…‰ç›˜å¼•å¯¼
+chroot /mnt/sysimage  åˆ‡æ¢æ ¹
+grub2-install /dev/sda   å®‰è£…grub
 ================================================
-RHEL7ÖĞÄÚºËµÈÒıµ¼ÎÄ¼şµÄĞŞ¸´
+RHEL7ä¸­å†…æ ¸ç­‰å¼•å¯¼æ–‡ä»¶çš„ä¿®å¤
 chroot /mnt/sysimage 
 mount /dev/cdrom /media
 rpm -ivh /media/Packages/kernel*****    --force
-°²×°Íê³Éºó£¬ÏµÍ³ÖĞ»áÉú³ÉÄÚºËºÍĞéÄâÎÄ¼şÏµÍ³¡£
+å®‰è£…å®Œæˆåï¼Œç³»ç»Ÿä¸­ä¼šç”Ÿæˆå†…æ ¸å’Œè™šæ‹Ÿæ–‡ä»¶ç³»ç»Ÿã€‚
 grub2-install /dev/sda   
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ================================================
-RHEL 7 Ìí¼ÓGrub¼ÓÃÜ
-ÔÚ/etc/grub.d/00_headerµÄÄ©Î²Ìí¼ÓÈçÏÂÄÚÈİ£º
+RHEL 7 æ·»åŠ GrubåŠ å¯†
+åœ¨/etc/grub.d/00_headerçš„æœ«å°¾æ·»åŠ å¦‚ä¸‹å†…å®¹ï¼š
 cat << EOF
 set superusers="tom"
 password tom redhat
 EOF
-×îºóÖ´ĞĞ¸üĞÂgrub.cfg²Ù×÷
+æœ€åæ‰§è¡Œæ›´æ–°grub.cfgæ“ä½œ
 grub2-mkconfig -o /boot/grub2/grub.cfg
 ================================================
-ÍøÂçµÄ»ù±¾ÅäÖÃ
-ifconfig   ²é¿´ÍøÂçµÄÅäÖÃÎÄ¼ş   
-/etc/sysconfig/network-scripts/              ÍøÂçÅäÖÃÎÄ¼şµÄÎ»ÖÃ  
-¾²Ì¬ÅäÖÃÍøÂç£º
+ç½‘ç»œçš„åŸºæœ¬é…ç½®
+ifconfig   æŸ¥çœ‹ç½‘ç»œçš„é…ç½®æ–‡ä»¶   
+/etc/sysconfig/network-scripts/              ç½‘ç»œé…ç½®æ–‡ä»¶çš„ä½ç½®  
+é™æ€é…ç½®ç½‘ç»œï¼š
 IPADDR:
 NETWORK:
 GATEWAY:
 DNS:
 
-service network restart   ÖØÆôÍøÂç·şÎñ
-service  NetworkManager stop    ¹Ø±ÕÍ¼ĞÎ»¯µÄÍøÂç¹ÜÀí¹¤¾ß
-chkconfig NetworkManager off   ¹Ø±ÕNetworkManager·şÎñ£¬·ÀÖ¹³åÍ»¡£×¢£ºÅäÖÃÎÄ¼şµÄÃ¿Ò»¸öĞŞ¸Ä£¬¶¼ĞèÒªÖØÆôÒ»ÏÂÍøÂç·şÎñ¡£
+service network restart   é‡å¯ç½‘ç»œæœåŠ¡
+service  NetworkManager stop    å…³é—­å›¾å½¢åŒ–çš„ç½‘ç»œç®¡ç†å·¥å…·
+chkconfig NetworkManager off   å…³é—­NetworkManageræœåŠ¡ï¼Œé˜²æ­¢å†²çªã€‚æ³¨ï¼šé…ç½®æ–‡ä»¶çš„æ¯ä¸€ä¸ªä¿®æ”¹ï¼Œéƒ½éœ€è¦é‡å¯ä¸€ä¸‹ç½‘ç»œæœåŠ¡ã€‚
 =================================================================================
-Ó²¼ş¼ì²â
-cat  /proc/cpuinfo      ²é¿´CPUµÄĞÅÏ¢
-lspci                            ²é¿´ËùÓĞµÄPCIĞÅÏ¢
-cat  /proc/meninfo   ²é¿´´æ´¢µÄĞÅÏ¢
-cat /proc/bus/usb/devices   ²é¿´ËùÓĞUSB½Ó¿ÚÉè±¸µÄĞÅÏ¢
-cat /proc/bus/input/devices   ²é¿´ËùÓĞÊäÈëÉè±¸µÄĞÅÏ¢
-fdisk  -l                    ²é¿´Ó²ÅÌµÄĞÅÏ¢
-df  -h                       ²é¿´Ó²ÅÌµÄĞÅÏ¢
+ç¡¬ä»¶æ£€æµ‹
+cat  /proc/cpuinfo      æŸ¥çœ‹CPUçš„ä¿¡æ¯
+lspci                            æŸ¥çœ‹æ‰€æœ‰çš„PCIä¿¡æ¯
+cat  /proc/meninfo   æŸ¥çœ‹å­˜å‚¨çš„ä¿¡æ¯
+cat /proc/bus/usb/devices   æŸ¥çœ‹æ‰€æœ‰USBæ¥å£è®¾å¤‡çš„ä¿¡æ¯
+cat /proc/bus/input/devices   æŸ¥çœ‹æ‰€æœ‰è¾“å…¥è®¾å¤‡çš„ä¿¡æ¯
+fdisk  -l                    æŸ¥çœ‹ç¡¬ç›˜çš„ä¿¡æ¯
+df  -h                       æŸ¥çœ‹ç¡¬ç›˜çš„ä¿¡æ¯
 uname -a 
 cat /proc/version 
-lsb_release -a         ²é¿´²úÆ··¢²¼ĞÅÏ¢£¨lsbÊÇlinuxµÄÒ»¸öºËĞÄ±ê×¼£©
-lsblk                      ÁĞ³öÏµÍ³ÖĞµÄËùÓĞ¿éÉè±¸ĞÅÏ¢
-cat /proc/interrupts   ²é¿´Éè±¸ÖĞËùÓĞµÄIRQĞÅºÅ
-dmidecode -t bios      ²é¿´BIOSĞÅÏ¢
-pstree -p |grep udev   ²é¿´udevÕâ¸ödaemons£¨ÊØ»¤½ø³Ì£©£¬×Ô¶¯Éè±¸µÄÃû³ÆºÍ¶¨ÒåÉè±¸ÈçºÎÊ¹ÓÃ¡£ËüÔÚ/etc/rc.d/rc.sysinit½Å±¾ºó¿ªÊ¼¹¤×÷¡£/etc/udev/rules.d/ÏÂ£¬´æ·ÅÁËÏµÍ³µÄ¹æÔòÎÄ¼ş¡£
-pstree -p |grep hal      halÕâ¸ödaemonÊÇÊµÏÖ³ÌĞòºÍÉè±¸Ö®¼ä½»Á÷µÄ£¬¸æËß³ÌĞòÈçºÎÊ¹ÓÃÉè±¸¡£
+lsb_release -a         æŸ¥çœ‹äº§å“å‘å¸ƒä¿¡æ¯ï¼ˆlsbæ˜¯linuxçš„ä¸€ä¸ªæ ¸å¿ƒæ ‡å‡†ï¼‰
+lsblk                      åˆ—å‡ºç³»ç»Ÿä¸­çš„æ‰€æœ‰å—è®¾å¤‡ä¿¡æ¯
+cat /proc/interrupts   æŸ¥çœ‹è®¾å¤‡ä¸­æ‰€æœ‰çš„IRQä¿¡å·
+dmidecode -t bios      æŸ¥çœ‹BIOSä¿¡æ¯
+pstree -p |grep udev   æŸ¥çœ‹udevè¿™ä¸ªdaemonsï¼ˆå®ˆæŠ¤è¿›ç¨‹ï¼‰ï¼Œè‡ªåŠ¨è®¾å¤‡çš„åç§°å’Œå®šä¹‰è®¾å¤‡å¦‚ä½•ä½¿ç”¨ã€‚å®ƒåœ¨/etc/rc.d/rc.sysinitè„šæœ¬åå¼€å§‹å·¥ä½œã€‚/etc/udev/rules.d/ä¸‹ï¼Œå­˜æ”¾äº†ç³»ç»Ÿçš„è§„åˆ™æ–‡ä»¶ã€‚
+pstree -p |grep hal      halè¿™ä¸ªdaemonæ˜¯å®ç°ç¨‹åºå’Œè®¾å¤‡ä¹‹é—´äº¤æµçš„ï¼Œå‘Šè¯‰ç¨‹åºå¦‚ä½•ä½¿ç”¨è®¾å¤‡ã€‚
 ================================================================================================
-Èí¼ş°²×°
+è½¯ä»¶å®‰è£…
 debain: 
 	/etc/apt/source.list
-	sudo apt-get  update   ¸üĞÂÔ´
-	sudo  apt-get upgrade  ¸üĞÂÏµÍ³£¨±£ÁôÔ­ÏµÍ³£©
-	sudo apt-get dist-upgrade  ¸üĞÂÏµÍ³£¨É¾³ıÔ­ÏµÍ³£©
-	sudo  apt-get   autoremove×Ô¶¯É¾³ıÒ»Ğ©²»³£ÓÃµÄÈí¼ş°ü
+	sudo apt-get  update   æ›´æ–°æº
+	sudo  apt-get upgrade  æ›´æ–°ç³»ç»Ÿï¼ˆä¿ç•™åŸç³»ç»Ÿï¼‰
+	sudo apt-get dist-upgrade  æ›´æ–°ç³»ç»Ÿï¼ˆåˆ é™¤åŸç³»ç»Ÿï¼‰
+	sudo  apt-get   autoremoveè‡ªåŠ¨åˆ é™¤ä¸€äº›ä¸å¸¸ç”¨çš„è½¯ä»¶åŒ…
 
-Ô´Âë±àÒë°²×°
-	ÓÅµã£º¶¨ÖÆĞÔ¸ß
-	È±µã£ººÄÊ±³¤
-	./configure   ¶¨ÖÆ»·¾³¡£   --prefix=Â·¾¶£¬¶¨ÖÆ°²×°Â·¾¶¡££¨ÓĞmakefile£¬ÔòËµÃ÷¸ÃÈí¼ş°üµÄ°²×°Â·¾¶ÒÑ±»¶¨Òå£©
-	make   ±àÒë
-	make install   °²×°
+æºç ç¼–è¯‘å®‰è£…
+	ä¼˜ç‚¹ï¼šå®šåˆ¶æ€§é«˜
+	ç¼ºç‚¹ï¼šè€—æ—¶é•¿
+	./configure   å®šåˆ¶ç¯å¢ƒã€‚   --prefix=è·¯å¾„ï¼Œå®šåˆ¶å®‰è£…è·¯å¾„ã€‚ï¼ˆæœ‰makefileï¼Œåˆ™è¯´æ˜è¯¥è½¯ä»¶åŒ…çš„å®‰è£…è·¯å¾„å·²è¢«å®šä¹‰ï¼‰
+	make   ç¼–è¯‘
+	make install   å®‰è£…
 
-rpm°ü°²×°£¨debain  dpkg£©
-	ÓÅµã£º¼òµ¥·½±ã
-	È±µã£º¹¦ÄÜÎŞ·¨¶¨ÖÆ£¬´æÔÚ°üÒÀÀµ
+rpmåŒ…å®‰è£…ï¼ˆdebain  dpkgï¼‰
+	ä¼˜ç‚¹ï¼šç®€å•æ–¹ä¾¿
+	ç¼ºç‚¹ï¼šåŠŸèƒ½æ— æ³•å®šåˆ¶ï¼Œå­˜åœ¨åŒ…ä¾èµ–
 	rpm 
-		-qa  ²é¿´ÏµÍ³ÖĞËùÓĞµÄrpmÈí¼ş°ü
-		-qa | gerp kernel     ²é¿´ÏµÍ³ÖĞ°üº¬kernel×Ö·ûµÄÈí¼ş°ü
-		-ql    kernel*    ²é¿´Ä³¸ö°ü°²×°µÄÎ»ÖÃ
-		-qc    kernel*   ²é¿´Ä³¸öÈí¼ş°üµÄÅäÖÃÎÄ¼şµÄ°²×°Î»ÖÃ
-		-qd    tree       ²é¿´Ä³Èí¼şµÄ°ïÖúÎÄµµ
-		-qf    /usr/bin/rz     ·´Ïò²é¿´Ä³³ÌĞòµÄÃû³Æ
-		-qlp   Èí¼ş°üÃû      °²×°Ç°²é¿´Ä³Èí¼ş°ü½«»á°²×°µÄÎ»ÖÃ
-		-K    Èí¼ş°üÃû       ²é¿´°²×°µÄÈí¼ş°üÊÇ·ñ´æÔÚÊı×ÖÇ©Ãû
-		-ivh   Èí¼ş°üÃû      °²×°Èí¼ş°ü
-		-Uvh  Èí¼ş°üÃû    U±íÊ¾¸üĞÂrpm°ü£¬Èç¹û°üÃ»ÓĞ°²×°¹ı£¬ÄÇ¾Í°²×°£¬Èç¹û×°¹ı£¬ÏÈĞ¶ÔØ£¬ÖØĞÂ°²×°µ±Ç°°æ±¾¡££¨Éı¼¶ÄÚºËÀàµÄ²»ÒªÊ¹ÓÃÕâÖÖ¸üĞÂ·½Ê½£©
-		-e      Èí¼ş°üÃû     Ğ¶ÔØÈí¼ş°ü
+		-qa  æŸ¥çœ‹ç³»ç»Ÿä¸­æ‰€æœ‰çš„rpmè½¯ä»¶åŒ…
+		-qa | gerp kernel     æŸ¥çœ‹ç³»ç»Ÿä¸­åŒ…å«kernelå­—ç¬¦çš„è½¯ä»¶åŒ…
+		-ql    kernel*    æŸ¥çœ‹æŸä¸ªåŒ…å®‰è£…çš„ä½ç½®
+		-qc    kernel*   æŸ¥çœ‹æŸä¸ªè½¯ä»¶åŒ…çš„é…ç½®æ–‡ä»¶çš„å®‰è£…ä½ç½®
+		-qd    tree       æŸ¥çœ‹æŸè½¯ä»¶çš„å¸®åŠ©æ–‡æ¡£
+		-qf    /usr/bin/rz     åå‘æŸ¥çœ‹æŸç¨‹åºçš„åç§°
+		-qlp   è½¯ä»¶åŒ…å      å®‰è£…å‰æŸ¥çœ‹æŸè½¯ä»¶åŒ…å°†ä¼šå®‰è£…çš„ä½ç½®
+		-K    è½¯ä»¶åŒ…å       æŸ¥çœ‹å®‰è£…çš„è½¯ä»¶åŒ…æ˜¯å¦å­˜åœ¨æ•°å­—ç­¾å
+		-ivh   è½¯ä»¶åŒ…å      å®‰è£…è½¯ä»¶åŒ…
+		-Uvh  è½¯ä»¶åŒ…å    Uè¡¨ç¤ºæ›´æ–°rpmåŒ…ï¼Œå¦‚æœåŒ…æ²¡æœ‰å®‰è£…è¿‡ï¼Œé‚£å°±å®‰è£…ï¼Œå¦‚æœè£…è¿‡ï¼Œå…ˆå¸è½½ï¼Œé‡æ–°å®‰è£…å½“å‰ç‰ˆæœ¬ã€‚ï¼ˆå‡çº§å†…æ ¸ç±»çš„ä¸è¦ä½¿ç”¨è¿™ç§æ›´æ–°æ–¹å¼ï¼‰
+		-e      è½¯ä»¶åŒ…å     å¸è½½è½¯ä»¶åŒ…
 		
-yum°²×°
-	ÓÅµã£º¾¡¿ÉÄÜ½â¾ö°üÒÀÀµ¡¢·½±ã
-	È±µã£º´æÔÚ°æ±¾ÒÀÀµ
-	Ô´Î»ÖÃ
-		rhel£º/etc/yum.repos.d/
-		debain¡¢ubuntu:/etc/apt/source.list.d/
-	Ô´ÈİÆ÷µÄÓï·¨£º
-		[Ô´·şÎñÆ÷Ãû³Æ]
-		name=Ô´·şÎñÆ÷µÄÃû×Ö£¬ÀàËÆ×¢ÊÍ
+yumå®‰è£…
+	ä¼˜ç‚¹ï¼šå°½å¯èƒ½è§£å†³åŒ…ä¾èµ–ã€æ–¹ä¾¿
+	ç¼ºç‚¹ï¼šå­˜åœ¨ç‰ˆæœ¬ä¾èµ–
+	æºä½ç½®
+		rhelï¼š/etc/yum.repos.d/
+		debainã€ubuntu:/etc/apt/source.list.d/
+	æºå®¹å™¨çš„è¯­æ³•ï¼š
+		[æºæœåŠ¡å™¨åç§°]
+		name=æºæœåŠ¡å™¨çš„åå­—ï¼Œç±»ä¼¼æ³¨é‡Š
 		mirrorlist=
 		#baseurl=
 		enabled=1
-		gpgchech=1(ÊÇ·ñÆôÓÃgpgĞ£Ñé,0²»ĞèÒª£¬1ĞèÒª)
-		gpgkey=file://Â·¾¶
-	yum°²×°
-		yum install name    °²×°Èí¼ş°ü
-		yum remove name   Ğ¶ÔØÈí¼ş°ü
-		yum search   name   ¼ìË÷Èí¼ş°ü
-		yum clean all           Çå³ıyum»º´æ
-		yum list name         ÁĞ³öÈí¼ş°ü
-		yum check-update   ¼ì²éÏµÍ³ÊÇ·ñĞèÒª¸üĞÂ
-		yum update/upgrade  ¸üĞÂÏµÍ³ 
+		gpgchech=1(æ˜¯å¦å¯ç”¨gpgæ ¡éªŒ,0ä¸éœ€è¦ï¼Œ1éœ€è¦)
+		gpgkey=file://è·¯å¾„
+	yumå®‰è£…
+		yum install name    å®‰è£…è½¯ä»¶åŒ…
+		yum remove name   å¸è½½è½¯ä»¶åŒ…
+		yum search   name   æ£€ç´¢è½¯ä»¶åŒ…
+		yum clean all           æ¸…é™¤yumç¼“å­˜
+		yum list name         åˆ—å‡ºè½¯ä»¶åŒ…
+		yum check-update   æ£€æŸ¥ç³»ç»Ÿæ˜¯å¦éœ€è¦æ›´æ–°
+		yum update/upgrade  æ›´æ–°ç³»ç»Ÿ 
 		
-dnf°²×°
+dnfå®‰è£…
 	dnf --list =yum list
-	dnf search tree =yum search tree   ¼ìË÷Èí¼ş°ü
-	dnf provides /usr/bin/rz=yum   provides /usr/bin/rz    ¸ù¾İ³ÌĞòµÄÖ¸ÁîÀ´»ñÈ¡³ÌĞò°²×°°üµÄÃû³Æ
+	dnf search tree =yum search tree   æ£€ç´¢è½¯ä»¶åŒ…
+	dnf provides /usr/bin/rz=yum   provides /usr/bin/rz    æ ¹æ®ç¨‹åºçš„æŒ‡ä»¤æ¥è·å–ç¨‹åºå®‰è£…åŒ…çš„åç§°
 	dnf whatprovides /usr/bin/rz
-	dnf list available    ÁĞ³öµ±Ç°ÏµÍ³ÄÜ¹»°²×°µÄÈí¼ş°ü
-	dnf install/remove  Èí¼ş°üÃû
-	dnf autoremove   ×Ô¶¯É¾³ıÒ»Ğ©²»³£ÓÃµÄÈí¼ş°ü
+	dnf list available    åˆ—å‡ºå½“å‰ç³»ç»Ÿèƒ½å¤Ÿå®‰è£…çš„è½¯ä»¶åŒ…
+	dnf install/remove  è½¯ä»¶åŒ…å
+	dnf autoremove   è‡ªåŠ¨åˆ é™¤ä¸€äº›ä¸å¸¸ç”¨çš„è½¯ä»¶åŒ…
 ===============================================================================================
-linuxÈí¼ş°üÏÂÔØÍøÕ¾£ºpkgs.org
+linuxè½¯ä»¶åŒ…ä¸‹è½½ç½‘ç«™ï¼špkgs.org

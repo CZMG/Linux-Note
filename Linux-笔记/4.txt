@@ -1,58 +1,58 @@
-/boot/grub/grub.conf
-	splashimage   -->ÉèÖÃgrub±³¾°
-	hiddenmenu  -->Òş²ØµÇÂ¼ÏêÏ¸ĞÅÏ¢
-	ÉèÖÃgrubµÇÂ¼ÃÜÂë£º(Ò»°ã²»ÓÃ£¬¿ª»úÄÜ¿´µ½¼Ò¼ÓÃÜÂë)
+ï»¿/boot/grub/grub.conf
+	splashimage   -->è®¾ç½®grubèƒŒæ™¯
+	hiddenmenu  -->éšè—ç™»å½•è¯¦ç»†ä¿¡æ¯
+	è®¾ç½®grubç™»å½•å¯†ç ï¼š(ä¸€èˆ¬ä¸ç”¨ï¼Œå¼€æœºèƒ½çœ‹åˆ°å®¶åŠ å¯†ç )
 		grub-md5-crypt
-		ÊäÈëÃÜÂë
-		´ò¿ª/boot/grub/grub.conf
+		è¾“å…¥å¯†ç 
+		æ‰“å¼€/boot/grub/grub.conf
 		password --md5 "**********"
 ====================================================================
-RHEL7µÄÆô¶¯¹ı³Ì
-systemd È¡´úÁË sysV init
-cgroup   ÎªÃ¿¸ö½ø³Ì·ÖÅäÒ»¸öcgroup£¬ÈÃ»¥Ïà²»ÒÀÀµµÄ½ø³Ì²¢ĞĞÆô¶¯£¬¼õÉÙ¿ª»úÊ±¼ä¡£
-syslogd  ¼ÇÂ¼ÏµÍ³ÈÕÖ¾£¬Ã¿¸ö½ø³Ì·ÖÅäÒ»¸ödeamons
-systemd  Ê¹ÓÃtargetÀ´¿ØÖÆÏµÍ³·şÎñµÄÆô¶¯£¬systemdÔÚ/usr/lib/systemd¡£
-RHEL6ÖĞÊ¹ÓÃrunlevel£¬7ÖĞÓÃtargetÌæ´ú
-Ã¿´ÎµÚÒ»¸öÆô¶¯µÄÍ¨³£ÊÇdefault.target
+RHEL7çš„å¯åŠ¨è¿‡ç¨‹
+systemd å–ä»£äº† sysV init
+cgroup   ä¸ºæ¯ä¸ªè¿›ç¨‹åˆ†é…ä¸€ä¸ªcgroupï¼Œè®©äº’ç›¸ä¸ä¾èµ–çš„è¿›ç¨‹å¹¶è¡Œå¯åŠ¨ï¼Œå‡å°‘å¼€æœºæ—¶é—´ã€‚
+syslogd  è®°å½•ç³»ç»Ÿæ—¥å¿—ï¼Œæ¯ä¸ªè¿›ç¨‹åˆ†é…ä¸€ä¸ªdeamons
+systemd  ä½¿ç”¨targetæ¥æ§åˆ¶ç³»ç»ŸæœåŠ¡çš„å¯åŠ¨ï¼Œsystemdåœ¨/usr/lib/systemdã€‚
+RHEL6ä¸­ä½¿ç”¨runlevelï¼Œ7ä¸­ç”¨targetæ›¿ä»£
+æ¯æ¬¡ç¬¬ä¸€ä¸ªå¯åŠ¨çš„é€šå¸¸æ˜¯default.target
 
-¶Ô±ÈÁ½¸öÏµÍ³µÄÆô¶¯¼¶±ğ£º
+å¯¹æ¯”ä¸¤ä¸ªç³»ç»Ÿçš„å¯åŠ¨çº§åˆ«ï¼š
 0 -->poweroff.target 
-1 -->resuce.target/emergency£¨resuce.targetĞŞ¸´²»ÁË£¬ÔòÊ¹ÓÃemergency£©
+1 -->resuce.target/emergencyï¼ˆresuce.targetä¿®å¤ä¸äº†ï¼Œåˆ™ä½¿ç”¨emergencyï¼‰
 2 -->multi-user.target 
 3 -->
 4 -->
 5 -->
 ===========================================================================
-targetµÄÂ·¾¶£º/usr/lib/systemd/system
-Ö÷ÅäÖÃÂ·¾¶£º/etc/systemd/system/default.target
+targetçš„è·¯å¾„ï¼š/usr/lib/systemd/system
+ä¸»é…ç½®è·¯å¾„ï¼š/etc/systemd/system/default.target
 ===========================================================================
-systemctl set-default multi-user.target   ÉèÖÃÄ¬ÈÏÆô¶¯·şÎñ£¬ÏÂ´ÎÆô¶¯ÉúĞ§¡£
-ststemd-analye time        ²é¿´¿ª»ú¸÷ÏîµÄÆô¶¯Ê±¼ä¡£
-systemctl isolate graphihcal.target    Ö±½ÓÇĞ»»½øÈëÆäËû¼¶±ğ¡£
-systemctl list-units    ²é¿´µ±Ç°ÒÑÆô¶¯µÄ·şÎñ¡£
-systemctl list-units --type=service ²é¿´ºó×ºÎªserviceµÄ·şÎñ¡£
-systemctl is-active  sshd.service    ²é¿´·şÎñÊÇ·ñÆô¶¯¡£
-systemctl stop sshd.service      ¹Ø±ÕÄ³·şÎñ¡£
+systemctl set-default multi-user.target   è®¾ç½®é»˜è®¤å¯åŠ¨æœåŠ¡ï¼Œä¸‹æ¬¡å¯åŠ¨ç”Ÿæ•ˆã€‚
+ststemd-analye time        æŸ¥çœ‹å¼€æœºå„é¡¹çš„å¯åŠ¨æ—¶é—´ã€‚
+systemctl isolate graphihcal.target    ç›´æ¥åˆ‡æ¢è¿›å…¥å…¶ä»–çº§åˆ«ã€‚
+systemctl list-units    æŸ¥çœ‹å½“å‰å·²å¯åŠ¨çš„æœåŠ¡ã€‚
+systemctl list-units --type=service æŸ¥çœ‹åç¼€ä¸ºserviceçš„æœåŠ¡ã€‚
+systemctl is-active  sshd.service    æŸ¥çœ‹æœåŠ¡æ˜¯å¦å¯åŠ¨ã€‚
+systemctl stop sshd.service      å…³é—­æŸæœåŠ¡ã€‚
 ==========================================================================
-ĞŞ¸Ägrub.cfgÀ´¾ö¶¨ÏµÍ³µÄÆô¶¯Ë³ĞòµÈĞèÒªĞŞ¸Ä/etc/default/grub£¬È»ºóÊ¹ÓÃÃüÁîgrub2-mkconfig -0 /boot/grub2/grub.cfgÀ´¸üĞÂgrub.cfgµÄÅäÖÃ¡£
-Èç¹ûÊÇdebainÀàµÄOSÊ¹ÓÃupdate-grub2À´ĞŞ¸Ä¡£
+ä¿®æ”¹grub.cfgæ¥å†³å®šç³»ç»Ÿçš„å¯åŠ¨é¡ºåºç­‰éœ€è¦ä¿®æ”¹/etc/default/grubï¼Œç„¶åä½¿ç”¨å‘½ä»¤grub2-mkconfig -0 /boot/grub2/grub.cfgæ¥æ›´æ–°grub.cfgçš„é…ç½®ã€‚
+å¦‚æœæ˜¯debainç±»çš„OSä½¿ç”¨update-grub2æ¥ä¿®æ”¹ã€‚
 
-ÏÈÓÃgrub2-set-default 1ĞŞ¸ÄÄ¬ÈÏÆô¶¯µÄÄÚºË£¨OS£©£¬ÔÚÓÃ  grub2-mkconfigÀ´¸üĞÂ¡£
+å…ˆç”¨grub2-set-default 1ä¿®æ”¹é»˜è®¤å¯åŠ¨çš„å†…æ ¸ï¼ˆOSï¼‰ï¼Œåœ¨ç”¨  grub2-mkconfigæ¥æ›´æ–°ã€‚
 ===========================================================================================
-resuceÄ£Ê½  µ¥ÓÃ»§Ä£Ê½    ½øÈëĞèÒªÃÜÂë
-emergencyÄ£Ê½  
+resuceæ¨¡å¼  å•ç”¨æˆ·æ¨¡å¼    è¿›å…¥éœ€è¦å¯†ç 
+emergencyæ¨¡å¼  
 
-RHEL7µÚÒ»ÖÖÆÆ½âÃÜÂëµÄ·½·¨£º init=/bin/sh 
-Ctrl+x Òıµ¼½øÈë
-½øÈësh2.4#
-´ËÊ±ÊäÈëpasswd ÊÇÎŞ·¨ĞŞ¸Ä³É¹¦µÄ
+RHEL7ç¬¬ä¸€ç§ç ´è§£å¯†ç çš„æ–¹æ³•ï¼š init=/bin/sh 
+Ctrl+x å¼•å¯¼è¿›å…¥
+è¿›å…¥sh2.4#
+æ­¤æ—¶è¾“å…¥passwd æ˜¯æ— æ³•ä¿®æ”¹æˆåŠŸçš„
 sh2.4#mount -o remount,rw /
-mountÊÇ¹ÒÔØ£¬²ÎÊıÊÇ-oÊÇ¶îÍâµÄÑ¡Ïî£¬Ñ¡Ïî¾ÍÊÇremount£¨ÖØĞÂ¹ÒÔØ£©£¬rw±íÊ¾È¨ÏŞ
-sh2.4#touch /.autorelabel    ´´½¨Õâ¸öÎÄ¼şµÄÄ¿µÄÊÇÎªÁËÈÃselinux×Ô¶¯´ò±êÇ©
+mountæ˜¯æŒ‚è½½ï¼Œå‚æ•°æ˜¯-oæ˜¯é¢å¤–çš„é€‰é¡¹ï¼Œé€‰é¡¹å°±æ˜¯remountï¼ˆé‡æ–°æŒ‚è½½ï¼‰ï¼Œrwè¡¨ç¤ºæƒé™
+sh2.4#touch /.autorelabel    åˆ›å»ºè¿™ä¸ªæ–‡ä»¶çš„ç›®çš„æ˜¯ä¸ºäº†è®©selinuxè‡ªåŠ¨æ‰“æ ‡ç­¾
 sh2.4#exec /sbin/init
 
 
 
-¸ÚÎ»£ºdevops
+å²—ä½ï¼šdevops
 
 pupput
