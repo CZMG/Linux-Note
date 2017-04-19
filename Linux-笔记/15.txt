@@ -100,6 +100,34 @@ alias rm=
 	\d   显示当前时间
 	\n   显示网络信息
 	\v   显示当前操作系统的信息
+
+/etc/issue - escape code
+ 
+      The issue-file (/etc/issue or the file set with the -f option) may contain certain escape codes to display the system name, date and time etc. All escape codes consist of a backslash (\) immediately followed by one of the letters explained below.
+ 
+      \b : Insert the baudrate of the current line.
+ 
+      \d : Insert the current date.
+ 
+      \s : Insert the system name, the name of the operating system.
+ 
+      \l : Insert the name of the current tty line.
+ 
+      \m : Insert the architecture identifier of the machine, eg. i486
+ 
+      \n : Insert the nodename of the machine, also known as the hostname.
+ 
+      \o : Insert the domainname of the machine.
+ 
+      \r : Insert the release number of the OS, eg. 1.1.9.
+ 
+      \t : Insert the current time.
+ 
+      \u : Insert the number of current users logged in.
+ 
+      \U : Insert the string "1 user" or " users" where is the number of current users logged in.
+ 
+      \v : Insert the version of the OS, eg. the build-date etc.
 ======================================================================================
 ~/.bash_profile  用户登录时执行，设置用户的环境变量，主要配置还是来自~/.bashrc
 ~/.bashrc      设置用户的bash环境，
