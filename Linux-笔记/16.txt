@@ -87,3 +87,49 @@ x|y          :匹配 x 或 y。例如，'z|food' 匹配“z”或“food”。'(
 \nm          :标识一个八进制转义码或反向引用。如果 \nm 前面至少有 nm 个捕获子表达式，那么 nm 是反向引用。如果 \nm 前面至少有 n 个捕获，则 n 是反向引用，后面跟有字符 m。如果两种前面的情况都不存在，则 \nm 匹配八进制值 nm，其中 n 和 m 是八进制数字 (0-7)。
 \nml         :当 n 是八进制数 (0-3)，m 和 l 是八进制数 (0-7) 时，匹配八进制转义码 nml。
 \un          :匹配 n，其中 n 是以四位十六进制数表示的 Unicode 字符。例如，\u00A9 匹配版权符号 (©)。
+================================================================
+sed  （流编辑器）
+vim属于屏幕编辑器。
+sed优点：一边编辑，一边调用，节省内存。
+sed在编辑文件时，首先把文档中的一行读入内存，这行内容我们时可以编辑的，这个内存的行称为模式空间。编辑完成后，这行会输出到屏幕，同时清空模式空间的内容，然后读入下一行，重复。
+这种修改默认模式下是不会修改源文件的内容的。
+
+sed语法：
+sed 'range command' filename
+	例：sed '34d' passwd 删除passwd文档的第34行。d是指令，表示删除。
+	sed 'd' passwd    删除passwd内的所有内容。
+	sed 's/ab/yz/g' 5.txt    讲5.txt中的ab第一行全局替换为yz。
+	sed 's/tom/xxxx/2' passwd  将passwd中的含有tom行的第二个tom替换为xxxx
+	sed '1s/ /--/2' 1  将1文档中的第一行第二个空格改为--
+	sed '1s/redhat/-&-/2' aa   将aa文档中的第一行第二个redhat前后加-。 （&表示引用前面的关键词）
+	sed '{s/linux/Linux/;s/Linux/RHEL7/g}' aa  如果对模式空间内的内容进行多次修改，需要使用'{;}'格式。
+	sed '1y/id/12' aa        将所有的i变为1，所有的d变为2。针对单个字符的修改，不需要加g。
+	sed '/USERCTL/a\IPADDR\=10.1.1.1' aa  在USERCTL行后添加IPADDR=10.1.1.1。（/a是往下添加，/i是往上添加）
+	sed '/ONBOOT/c\ONBOOT=no' aa     直接使用/c来修改某一行的内容。
+
+sed -i  修改源文件(没有输出，直接写入源文件)
+
+sed '/^BOOT/{=}' aa     {=}指定行号
+sed '/^BOOT/{n;s/yes/no}' aa   n表示读取下一行，首先找出^BOOT内容行，然后读取下一行修改。
+sed '/^BOOT/{N;s/yes/no}' aa   N表示读取下面多行，多行模式空间，并且不删除当前空间的行。多行模式空间中使用^不在表示开头，$不表示结尾，分别表示模式空间的开头和结束。
+
+sed '/^$d' aa    删除aa文档中的空行
+
+
+sed除了模式空间外，还有一个保持空间，其实就是缓存。
+========================================================
+awk    主要用来对文档进行排版，使用灵活，是shell的又一利器。
+
+cut -d:  -f 4 passwd
+$0(当前行)  $1  $2
+
+语法：awk -F: 'range,command1;command2' filename
+	-F   指定分隔符
+
+例：awk -F: '$1~/lf/{ print $3 }'  /etc/passwd
+    swk 'BEGIN{FS=":";OFS="--"}$1~/lf/{print $3}' /etc/passwd
+    ifconfig eth1 |grep "inet addr" | awk 'BEGIN{print "Server is IP"}{print $2}{print "!"}'
+    who | awk '{print NF}'
+    who | awk '{print NR}'
+    cat /etc/passwd | awk NR==10
+    awk -F: 'BEGIN{nologin=0}/nologin/{nologin++}END{print nologin}' /etc/passwd
