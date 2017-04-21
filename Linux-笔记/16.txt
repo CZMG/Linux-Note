@@ -127,7 +127,7 @@ $0(当前行)  $1  $2
 	-F   指定分隔符
 
 例：awk -F: '$1~/lf/{ print $3 }'  /etc/passwd
-    swk 'BEGIN{FS=":";OFS="--"}$1~/lf/{print $3}' /etc/passwd
+    awk 'BEGIN{FS=":";OFS="--"}$1~/lf/{print $3}' /etc/passwd
     ifconfig eth1 |grep "inet addr" | awk 'BEGIN{print "Server is IP"}{print $2}{print "!"}'
     who | awk '{print NF}'
     who | awk '{print NR}'
