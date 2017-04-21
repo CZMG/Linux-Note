@@ -125,10 +125,11 @@ $0(当前行)  $1  $2
 
 语法：awk -F: 'range,command1;command2' filename
 	-F   指定分隔符
+	~    用于匹配正则表达式（~!匹配非正则表达式）
 
 例：awk -F: '$1~/lf/{ print $3 }'  /etc/passwd
     awk 'BEGIN{FS=":";OFS="--"}$1~/lf/{print $3}' /etc/passwd
-    ifconfig eth1 |grep "inet addr" | awk 'BEGIN{print "Server is IP"}{print $2}{print "!"}'
+    ifconfig eth1 |grep "inet addr" |awk '{print $2}' | awk -F: 'BEGIN{print "Server is IP"}{print $2}{print "!"}'
     who | awk '{print NF}'
     who | awk '{print NR}'
     cat /etc/passwd | awk NR==10
