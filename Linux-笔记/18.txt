@@ -68,3 +68,52 @@ cpio    归档，也可以用来备份数据，这个工具本身并不知道需
 	例：find . -iname \*.dump | cpio -o > test.cpio
 	cpio -i < test.cpio
 	参数o为归档（打包），i为解档。
+=======================================
+实时备份
+rsync(只传输差异变化)   scp(ssh方式cp) 
+数据同步有两种方式：推，拉
+拉：从服务器端拉取数据，对服务器的开销很小，完全取决于客户端的操作，不能真正做到同步，非实时，传输速度慢。
+推：服务器的开销大，但因为主动方是变化端，所以可以做到同步。
+rsync  参数：
+	-a  归档模式
+	-r  递归
+	-b  备份
+例子：rsync -azP root@192.168.24.240:/tmp/xx /tmp/yy   从服务器端拉取
+
+inotify 是内核2.6以后自带的一个机制，提供了对文件的事件的监控，比如文件的修改，删除，添加，属性的调整。
+/proc/sys/fs/inotify/max_
+max_queued_events   ：最大的队列
+max_user_instances  ： 最大的实例
+max_user_watches    ：每个用户实例最多监控的文件数量
+
+/etc/sysctl.conf : 对linux内核深度的修改。用sysctl -p 生效配置。
+RHEL7默认需要手动编写，类似fs.inotify.max_queued_events=32768编写。
+
+inotifywatch 
+inotifywait
+	-m   监控
+	-e   指明事件
+	-r   递归
+例：inotifywait -mrq -e move,create,delete,modify /test   对目录test产生的事件进行监控，事件有移动，创建，删除
+
+编写脚本
+实时同步：monitor.sh
+SRC=/tmp/test
+DST=root@192.168.24.240:/tmp/xx
+inotifywait -mrp  -e move,create,delete,modify ${SRC} | while read line
+do
+        rsync -azP --delete ${SRC} ${DST}
+done    
+
+监控脚本：
+pgrep monitor.sh
+if [ ! $? ==0 ];then
+	/tmp/monitor.sh
+fi
+
+无密码登陆
+ssh-keygen
+ssh-copy-id root@192.168.24.240
+
+开机启动命令
+/etc/rc.local
