@@ -100,7 +100,7 @@ inotifywait
 实时同步：monitor.sh
 SRC=/tmp/test
 DST=root@192.168.24.240:/tmp/xx
-inotifywait -mrp  -e move,create,delete,modify ${SRC} | while read line
+inotifywait -mrq -e move,create,delete,modify ${SRC} | while read line
 do
         rsync -azP --delete ${SRC} ${DST}
 done    
