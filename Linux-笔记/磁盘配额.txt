@@ -1,0 +1,20 @@
+﻿磁盘配额
+
+mount -o -usrquota,grpquota /dev/sdb2 /mnt
+磁盘配额必须在挂在前设置。
+要做磁盘配额必须关闭selinux。
+
+quotacheck -cug /dev/sdb2           针对/dev/sdb2创建一个针对用户和组的配额数据库
+quotaon -u /dev/sdb2                针对用户激活配额功能
+	-g                          针对组
+quotaoff                            关闭磁盘配额
+edquota -u                          针对用户设置磁盘配额
+	-g                          针对组
+		blocks   块
+		soft 软限制（还可以向上）
+		hard 硬限制（只能到达限制值）
+		inodes  限制存放的文件数（一个文件占1个inode值）
+	-p  u1 u2                   以用户u1的配额来配置u2
+quota	-s      人性化配额查看
+repquota -a     查看所有用户的配额
+warnquota       打开邮件告警功能
