@@ -48,3 +48,6 @@ umount /root/test
 lvcreate -n sn -L 300M -s /dev/vg0/lv0 &> /dev/null
 
 lvremove -f /dev/vg0/sn
+===========================
+图形化管理工具
+yum install system-config-lvm (RHEL7默认取消了这个软件)

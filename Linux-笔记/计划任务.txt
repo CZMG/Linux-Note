@@ -1,0 +1,21 @@
+计划任务
+1、at  一次性任务 
+daemon: atd
+
+使用：
+at 05042017
+ctrl+D 退出
+
+at now + 12minutes
+at 10am tomorrow
+at 6am + 3days
+
+at -l  查看计划任务数
+at -c 3 查看第五个计划任务
+
+atrm 1  删除第一个计划任务
+at -d 1 删除第一个计划任务
+
+/etc/at.deny 不允许写计划任务的黑名单
+/etc/at.allow  白名单（默认没有白名单）
+当黑白名单有相同的账户时，白名单优先权高于黑名单。
