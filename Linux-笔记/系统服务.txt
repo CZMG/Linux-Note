@@ -1,0 +1,32 @@
+Daemons   系统服务
+守护进程
+独立的：每一个服务会自己监听自己的端口，比如web服务器就会有一个进程监听自身的80端口。
+非独立：super daemon  通常都是由xinetd统一管理
+端口：/etc/services   1-1024都是常用端口
+
+/etc/init.d/         6里存放daemon的目录，7也是放在这个目录里。
+
+yum install xinetd    用它来管理没有守护进程的服务
+/etc/xinetd.d/        非独立服务存放的路径
+每一个daemon都有一个配置文件，daemons的启动会根据配置文件中的设定来执行，所以每次修改玩配置文件如果希望daemons按需求执行，需要重启服务。同样，xinetd也是一个daemons,
+
+/etc/xinetd.conf
+	cps             = 50 10  :  同一秒内最多允许50个链接，如果超过，对外服务暂停10s
+	instances       = 50     :  同一实例最大链接数50个
+	per_source      = 10     ： 同一源链接最多10次
+	
+/etc/xinetd.d/telnet
+	
+================================================
+TcpWrappers  防火墙
+
+/etc/hosts.allow         提供的是白名单
+/etc/hosts.deny          提供的是黑名单
+白名单优先级高。
+写入规则立即生效。
+
+例：
+in.telnetd: 192.168.24.4:allow
+in.telnetd: 192.168.24.4:spawn wall "xx" , spawn：前面的指令执行成功，执行后面的指令。
+in.telnetd: 192.168.24.4:twist wall "xx" , twist的语法不能放在allow的名单中。因为twist是匹配成功后立即终止并且执行twist后的指令。
+
