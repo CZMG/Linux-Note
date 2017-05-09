@@ -1,0 +1,103 @@
+1、日志服务器
+rsyslog代替了syslog
+service/systemctl rsyslog status
+
+/var/log/
+dmesg     内核的启动
+maillog   邮件的日志
+messages  系统服务日志
+cron      计划任务的日志
+secure    用户登陆的信息
+btmp      登陆失败的信息
+wtmp      所有用户登陆的信息
+
+yum install rsyslog    安装日志服务器
+rsyslogd -v            查看日志服务器支持的功能
+/etc/rsyslog.conf      日志服务器的主配置文件
+
+日志标准格式：
+事件.级别                日志记录的位置
+事件分类：
+authpriv:和认证有关的事件
+mail：邮件系统有关的事件
+cron：计划任务有关的事件
+kern：内核有关的事件
+syslog：日志服务有关的事件
+uucp：
+news：新闻系统有关的事件
+daemon:守护进程有关的事件
+local0-local7:用户自定义事件
+
+级别：从高往低
+*:所有级别
+emerg:恐慌级别
+alert:紧急
+cirt: 临界，有严重错误出现
+err: 标准错误
+warning:警告
+notice:需要关注
+info：提供所有的信息
+debug:开发者使用的调试级别
+
+日志记录的规则
+*.info   /var/log/test.log
+.   大于等于后面的级别
+.=  表示前面的事件必须等于后面的级别才记录
+.!  表示不等于，除了定义的级别以外的都记录
+
+-/var/log/maillog    -表示先写入内存
+
+vim /etc/rsyslog.conf            自定义日志
+local0.*     /var/log/ssh.log
+vim /etc/sshd_config
+
+日志的格式：
+datetime,hostname,server[pid],action
+
+logger -p local5.debug "debug err"     模拟产生日志
+tailf debug.log                        实时查看日志（tailf即tail -f）
+journalctl -n 10                       查看系统日志（RHEL7）
+	--since today                  只查看今天有关的日志
+	-p  emerg                      只查看级别和恐慌级别有关的日志
+	--since "2017-05-01"  --until "2017-05-10"    查看特定的时间段的日志
+=====================================================================
+2、中央服务器
+专门收集相关服务器日志
+中央服务器：
+vim /etc/rsyslog.conf
+local5.*        /var/log/remote.log
+开启tcp/udp
+service rsyslog restart
+iptables -F                   关闭防火墙
+注：修改默认端口需要修改selinux,开514修改防火墙
+
+客户端：
+vim /etc/rsyslog.conf
+local5.*                  @192.168.24.240:514      @表示udp,@@表示tcp
+=====================================================================
+3、日志备份
+日志回滚脚本：
+ld=/var/log
+cd ${ld}
+rm -rf messages3
+mv messages2 messages3
+mv messages1 messages2
+mv messages  messages1
+
+crontab -a 
+0 10 * * 7   脚本
+
+logrotate    系统预装的日志轮循工具
+/etc/logrotate.conf          配置文件
+
+=====================================================================
+4、日志分析
+AIDE       系统入侵检测工具
+yum install aide -y
+aide -i               初始化，时间长
+aide --check          检测日志的变化
+
+logwatch   perl写的开源日志分析工具，主要是可以很方便的实现对日志的摘要，但它不是用了实时监控的。
+yum install logwatch -y
+/etc/logwatch/conf/logwatch.conf        主配置文件
+logwatch      运行会发送日志信息到指定位置
