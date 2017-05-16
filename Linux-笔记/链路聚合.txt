@@ -1,0 +1,18 @@
+链路聚合
+
+链路备份 activebackup
+负载均衡 loadbalance
+轮循     roundrobin
+===================================
+实验步骤：
+1、     nmcli connection show
+	nmcli connection add type team con-name team0 ifname team0 config '{"runner":{"name":"loadbalance"}}'    通过nmcli创建一块虚拟网卡，虚拟网卡的类型是链路聚合，名称是team0，通过json定义使用的模式是负载均衡。
+注：配置文件内若缺少\转义，启动网卡可能会报错。
+
+2、     nmcli connection add type team-slave con-name slave0 eno16777736 master team0     将eno16777736网卡与team0绑定，定义类型为链路聚合组中的从设备类型，并生成配置文件
+
+3、     将原物理网卡配置文件移走，以免发生冲突。
+
+4、	查看网卡信息：teamdctl team0 state,查看链路聚合网卡的状态，所有网卡MAC地址应该是一样的。
+==================================
+

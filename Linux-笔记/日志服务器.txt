@@ -74,6 +74,9 @@ iptables -F                   关闭防火墙
 客户端：
 vim /etc/rsyslog.conf
 local5.*                  @192.168.24.240:514      @表示udp,@@表示tcp
+service rsyslog restart
+iptables -F                   关闭防火墙
+注：修改默认端口需要修改selinux,开514修改防火墙
 =====================================================================
 3、日志备份
 日志回滚脚本：
