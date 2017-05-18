@@ -1,2 +1,70 @@
 路由的设置和安全防护
 
+实验步骤：
+添加路由（临时有效）
+a:route add default gw 10.0.0.1
+b:route add -net 30.0.0.0/24
+c:route add -net 10.0.0.0/24  dev 
+d:route add default gw 30.0.0.2
+永久生效
+在/etc/sysconfig/network-script/内新建route-eth1:
+30.0.0.0/24   via  20.0.0.2  dev  eth1
+
+临时关闭防火墙
+6：iptables -F
+7:systemctl stop firewalld或者firewall-cmd --set-default-zones=trusted
+
+开启转发功能
+暂时有效
+echo 1 > /proc/sys/net/ipv4/ip_forward
+永久生效
+6:/etc/sysctl.conf  里 net.ipv4.ip.forward=1
+7:默认没有，手动写入
+=======================================================================
+开源路由方案：openwrt\routeros
+yum isntall quagga -y 
+========================================================================
+防火墙
+硬件防火墙--数据包过滤
+软件防火墙--tcpwrapper\iptables\ebtables\firewalld
+
+包过滤防火墙技术（ACL），在网络层通过访问控制列表对数据包进行过滤。
+代理服务防火墙技术，典型的就是链路级的网关。反向代理技术就是如此，典型的应用就是Nginx。
+
+Linux内核级别直接实现的防火墙功能。
+iptables就是依赖的netfilter
+RHEL7中使用的firewalld依然依赖的是netfilter，但是管理工具使用firewall-cmd。
+
+iptables直接由内核驱动运行，编写规则也是从上往下，并且一旦匹配某一条目，就不再往下匹配，不同的服务之间，规则互不影响。
+
+iptables 表 (table)
+	filter表和nat表
+iptables -t nat -L -n   查看nat表的规则。-t ，table指明表名，-L表示以列表，-n表示禁止反向解析。不指明查看的表名，默认为filter表。
+
+iptables 链（chain）
+filter表的三条链：
+	INPUT:针对进来的数据进行过滤
+	FORWARD：要求转发的数据
+	OUTPUT：出去的数据
+nat表的三条链：
+	PREROUTING:目的地址转换
+	POSTROUTING：源地址转换
+	OUTPUT：防火墙自身访问时，是否转换
+
+iptables中filter表的语法使用：
+[root@centos6 ~]# iptables -t filter \
+> -A|D|I \添加|删除|插入
+> INPUT|OUTPUT|FORWARD \指定链
+> -p tcp|udp|icmp \指定协议
+> -s 1.1.1.1/24 -d 2.2.2.2/24 \指定源地址和目的地址
+> --sport m:n -dport m:n \指定源端口和目的端口
+> -j ACCEPT|REJECT|DROP|LOG \指定行为
+
+======================================================
+nmap
+	-sT IP :扫面TCP服务端口
+	-sU IP :
+	-sP 
+	-sV IP :查看目的主机开启的服务
+	-O  IP :估计操作系统
+		--osscan-guess  :  猜测操作系统
