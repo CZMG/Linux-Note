@@ -38,7 +38,7 @@ RHEL7中使用的firewalld依然依赖的是netfilter，但是管理工具使用
 iptables直接由内核驱动运行，编写规则也是从上往下，并且一旦匹配某一条目，就不再往下匹配，不同的服务之间，规则互不影响。
 
 iptables 表 (table)
-	filter表和nat表
+	filter表(包过滤)和nat表（地址转换）
 iptables -t nat -L -n   查看nat表的规则。-t ，table指明表名，-L表示以列表，-n表示禁止反向解析。不指明查看的表名，默认为filter表。
 
 iptables 链（chain）
@@ -64,7 +64,7 @@ iptables中filter表的语法使用：
 nmap
 	-sT IP :扫面TCP服务端口
 	-sU IP :
-	-sP 
+	-sP IP :ping扫描，查看主机是否存活
 	-sV IP :查看目的主机开启的服务
 	-O  IP :估计操作系统
 		--osscan-guess  :  猜测操作系统
