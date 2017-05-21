@@ -1,103 +1,103 @@
-·À»ğÇ½
-Ó²¼ş·À»ğÇ½--Êı¾İ°ü¹ıÂË
-Èí¼ş·À»ğÇ½--tcpwrapper\iptables\ebtables\firewalld
+ï»¿é˜²ç«å¢™
+ç¡¬ä»¶é˜²ç«å¢™--æ•°æ®åŒ…è¿‡æ»¤
+è½¯ä»¶é˜²ç«å¢™--tcpwrapper\iptables\ebtables\firewalld
 
-°ü¹ıÂË·À»ğÇ½¼¼Êõ£¨ACL£©£¬ÔÚÍøÂç²ãÍ¨¹ı·ÃÎÊ¿ØÖÆÁĞ±í¶ÔÊı¾İ°ü½øĞĞ¹ıÂË¡£
-´úÀí·şÎñ·À»ğÇ½¼¼Êõ£¬µäĞÍµÄ¾ÍÊÇÁ´Â·¼¶µÄÍø¹Ø¡£·´Ïò´úÀí¼¼Êõ¾ÍÊÇÈç´Ë£¬µäĞÍµÄÓ¦ÓÃ¾ÍÊÇNginx¡£
+åŒ…è¿‡æ»¤é˜²ç«å¢™æŠ€æœ¯ï¼ˆACLï¼‰ï¼Œåœ¨ç½‘ç»œå±‚é€šè¿‡è®¿é—®æ§åˆ¶åˆ—è¡¨å¯¹æ•°æ®åŒ…è¿›è¡Œè¿‡æ»¤ã€‚
+ä»£ç†æœåŠ¡é˜²ç«å¢™æŠ€æœ¯ï¼Œå…¸å‹çš„å°±æ˜¯é“¾è·¯çº§çš„ç½‘å…³ã€‚åå‘ä»£ç†æŠ€æœ¯å°±æ˜¯å¦‚æ­¤ï¼Œå…¸å‹çš„åº”ç”¨å°±æ˜¯Nginxã€‚
 
-LinuxÄÚºË¼¶±ğÖ±½ÓÊµÏÖµÄ·À»ğÇ½¹¦ÄÜ¡£
+Linuxå†…æ ¸çº§åˆ«ç›´æ¥å®ç°çš„é˜²ç«å¢™åŠŸèƒ½ã€‚
 ==========================================================================================
 iptables 
 
-iptables¾ÍÊÇÒÀÀµµÄnetfilter
-RHEL7ÖĞÊ¹ÓÃµÄfirewalldÒÀÈ»ÒÀÀµµÄÊÇnetfilter£¬µ«ÊÇ¹ÜÀí¹¤¾ßÊ¹ÓÃfirewall-cmd¡£
+iptableså°±æ˜¯ä¾èµ–çš„netfilter
+RHEL7ä¸­ä½¿ç”¨çš„firewalldä¾ç„¶ä¾èµ–çš„æ˜¯netfilterï¼Œä½†æ˜¯ç®¡ç†å·¥å…·ä½¿ç”¨firewall-cmdã€‚
 
-iptablesÖ±½ÓÓÉÄÚºËÇı¶¯ÔËĞĞ£¬±àĞ´¹æÔòÒ²ÊÇ´ÓÉÏÍùÏÂ£¬²¢ÇÒÒ»µ©Æ¥ÅäÄ³Ò»ÌõÄ¿£¬¾Í²»ÔÙÍùÏÂÆ¥Åä£¬²»Í¬µÄ·şÎñÖ®¼ä£¬¹æÔò»¥²»Ó°Ïì¡£
+iptablesç›´æ¥ç”±å†…æ ¸é©±åŠ¨è¿è¡Œï¼Œç¼–å†™è§„åˆ™ä¹Ÿæ˜¯ä»ä¸Šå¾€ä¸‹ï¼Œå¹¶ä¸”ä¸€æ—¦åŒ¹é…æŸä¸€æ¡ç›®ï¼Œå°±ä¸å†å¾€ä¸‹åŒ¹é…ï¼Œä¸åŒçš„æœåŠ¡ä¹‹é—´ï¼Œè§„åˆ™äº’ä¸å½±å“ã€‚
 
-iptables ÅäÖÃÎÄ¼ş /etc/sysconfig/iptables
+iptables é…ç½®æ–‡ä»¶ /etc/sysconfig/iptables
 
-ÅäÖÃ±£´æºÍ»Ö¸´£º
-iptables ±£´æ service iptables save
-iptables-save > /test/iptables.txt,±£´æ
-iptables-restore < /test/iptables.txt£¬»Ö¸´
+é…ç½®ä¿å­˜å’Œæ¢å¤ï¼š
+iptables ä¿å­˜ service iptables save
+iptables-save > /test/iptables.txt,ä¿å­˜
+iptables-restore < /test/iptables.txtï¼Œæ¢å¤
 
-iptables ±í (table)
-	filter±í(°ü¹ıÂË)ºÍnat±í£¨µØÖ·×ª»»£©
-iptables -t nat -L -n   ²é¿´nat±íµÄ¹æÔò¡£-t £¬tableÖ¸Ã÷±íÃû£¬-L±íÊ¾ÒÔÁĞ±í£¬-n±íÊ¾½ûÖ¹·´Ïò½âÎö¡£²»Ö¸Ã÷²é¿´µÄ±íÃû£¬Ä¬ÈÏÎªfilter±í¡£
+iptables è¡¨ (table)
+	filterè¡¨(åŒ…è¿‡æ»¤)å’Œnatè¡¨ï¼ˆåœ°å€è½¬æ¢ï¼‰
+iptables -t nat -L -n   æŸ¥çœ‹natè¡¨çš„è§„åˆ™ã€‚-t ï¼ŒtableæŒ‡æ˜è¡¨åï¼Œ-Lè¡¨ç¤ºä»¥åˆ—è¡¨ï¼Œ-nè¡¨ç¤ºç¦æ­¢åå‘è§£æã€‚ä¸æŒ‡æ˜æŸ¥çœ‹çš„è¡¨åï¼Œé»˜è®¤ä¸ºfilterè¡¨ã€‚
 
-iptables Á´£¨chain£©
-filter±íµÄÈıÌõÁ´£º
-	INPUT:Õë¶Ô½øÀ´µÄÊı¾İ½øĞĞ¹ıÂË
-	FORWARD£ºÒªÇó×ª·¢µÄÊı¾İ
-	OUTPUT£º³öÈ¥µÄÊı¾İ
-nat±íµÄÈıÌõÁ´£º
-	PREROUTING:Ä¿µÄµØÖ·×ª»»
-	POSTROUTING£ºÔ´µØÖ·×ª»»
-	OUTPUT£º·À»ğÇ½×ÔÉí·ÃÎÊÊ±£¬ÊÇ·ñ×ª»»
+iptables é“¾ï¼ˆchainï¼‰
+filterè¡¨çš„ä¸‰æ¡é“¾ï¼š
+	INPUT:é’ˆå¯¹è¿›æ¥çš„æ•°æ®è¿›è¡Œè¿‡æ»¤
+	FORWARDï¼šè¦æ±‚è½¬å‘çš„æ•°æ®
+	OUTPUTï¼šå‡ºå»çš„æ•°æ®
+natè¡¨çš„ä¸‰æ¡é“¾ï¼š
+	PREROUTING:ç›®çš„åœ°å€è½¬æ¢
+	POSTROUTINGï¼šæºåœ°å€è½¬æ¢
+	OUTPUTï¼šé˜²ç«å¢™è‡ªèº«è®¿é—®æ—¶ï¼Œæ˜¯å¦è½¬æ¢
 
-iptablesÖĞfilter±íµÄÓï·¨Ê¹ÓÃ£º
+iptablesä¸­filterè¡¨çš„è¯­æ³•ä½¿ç”¨ï¼š
 [root@centos6 ~]# iptables -t filter \
-> -A|D|I \Ìí¼Ó|É¾³ı|²åÈë
-> INPUT|OUTPUT|FORWARD \Ö¸¶¨Á´
-> -p tcp|udp|icmp \Ö¸¶¨Ğ­Òé
-> -s 1.1.1.1/24 -d 2.2.2.2/24 \Ö¸¶¨Ô´µØÖ·ºÍÄ¿µÄµØÖ·
-> --sport m:n -dport m:n \Ö¸¶¨Ô´¶Ë¿ÚºÍÄ¿µÄ¶Ë¿Ú
-> -m tcp|udp|mac --mac=|state --NEW|ESTABLISHED|RELATED|INVALID   \Ö¸¶¨¶îÍâ¹æÔò
-> -j ACCEPT|REJECT|DROP|LOG \Ö¸¶¨ĞĞÎª
+> -A|D|I \æ·»åŠ |åˆ é™¤|æ’å…¥
+> INPUT|OUTPUT|FORWARD \æŒ‡å®šé“¾
+> -p tcp|udp|icmp \æŒ‡å®šåè®®
+> -s 1.1.1.1/24 -d 2.2.2.2/24 \æŒ‡å®šæºåœ°å€å’Œç›®çš„åœ°å€
+> --sport m:n -dport m:n \æŒ‡å®šæºç«¯å£å’Œç›®çš„ç«¯å£
+> -m tcp|udp|mac --mac=|state --NEW|ESTABLISHED|RELATED|INVALID   \æŒ‡å®šé¢å¤–è§„åˆ™
+> -j ACCEPT|REJECT|DROP|LOG \æŒ‡å®šè¡Œä¸º
 
-iptables -P INPUT DROP   ½«filter±íµÄINPUTÁ´µÄÄ¬ÈÏ¹æÔò¸ÄÎªDROP
-iptables -F     ÁÙÊ±Çå³ı·À»ğÇ½µÄËùÓĞ¹æÔò£¬ÎŞĞèÖØÆô
-iptables -L -n --line-number            ÉèÖÃ¹æÔòĞĞºÅ
+iptables -P INPUT DROP   å°†filterè¡¨çš„INPUTé“¾çš„é»˜è®¤è§„åˆ™æ”¹ä¸ºDROP
+iptables -F     ä¸´æ—¶æ¸…é™¤é˜²ç«å¢™çš„æ‰€æœ‰è§„åˆ™ï¼Œæ— éœ€é‡å¯
+iptables -L -n --line-number            è®¾ç½®è§„åˆ™è¡Œå·
 
-iptables ÖĞµÄstateµÄËÄÖÖÀàĞÍ£º
-NEW£º½¨Á¢Á¬½ÓµÄµÚÒ»¸ö°ü£¬Í¨³£ÊÇ·¢Æğ·½µÄµÚÒ»¸ö°ü¡£
-ESTABLISHED£ºÊôÓÚÒ»¸öÒÑ¾­½¨Á¢µÄÁ´½Ó£¬Í¨³£¶¼ÊÇ»ñÈ¡µ½ÁËµÚÒ»¸öNEW°üºó²úÉúµÄ¡£Ò²¾ÍÊÇNEWµÄÏÂÒ»¸ö×´Ì¬¡£icmpÖĞµÄÖØ¶¨Ïò¡¢´íÎóµÈ¶¼ÊôÓÚÕâÖÖÀàĞÍ¡£
-RELATED£ºÊôÓÚÒ»¸öÒÑ¾­´æÔÚµÄESTABLISHEDÁ´½Ó´æÔÚÖ®ÍâµÄÁ´½Ó¡£ESTABLISHEDµÄÏÂÒ»¸ö×´Ì¬¡£
-INVALID£º´íÎóµÄÁ´½ÓÀàĞÍ£¬Ã»ÓĞÒÑÖªµÄÁ÷»òÕßÁ´½ÓÓëËü¹ØÁª¡£Í¨³£¶¼ÊÇ°üÍ·ÓĞ´íÎó»òÕßÁ´½Ó±»dropÖ®ÀàµÄ¡£
+iptables ä¸­çš„stateçš„å››ç§ç±»å‹ï¼š
+NEWï¼šå»ºç«‹è¿æ¥çš„ç¬¬ä¸€ä¸ªåŒ…ï¼Œé€šå¸¸æ˜¯å‘èµ·æ–¹çš„ç¬¬ä¸€ä¸ªåŒ…ã€‚
+ESTABLISHEDï¼šå±äºä¸€ä¸ªå·²ç»å»ºç«‹çš„é“¾æ¥ï¼Œé€šå¸¸éƒ½æ˜¯è·å–åˆ°äº†ç¬¬ä¸€ä¸ªNEWåŒ…åäº§ç”Ÿçš„ã€‚ä¹Ÿå°±æ˜¯NEWçš„ä¸‹ä¸€ä¸ªçŠ¶æ€ã€‚icmpä¸­çš„é‡å®šå‘ã€é”™è¯¯ç­‰éƒ½å±äºè¿™ç§ç±»å‹ã€‚
+RELATEDï¼šå±äºä¸€ä¸ªå·²ç»å­˜åœ¨çš„ESTABLISHEDé“¾æ¥å­˜åœ¨ä¹‹å¤–çš„é“¾æ¥ã€‚ESTABLISHEDçš„ä¸‹ä¸€ä¸ªçŠ¶æ€ã€‚
+INVALIDï¼šé”™è¯¯çš„é“¾æ¥ç±»å‹ï¼Œæ²¡æœ‰å·²çŸ¥çš„æµæˆ–è€…é“¾æ¥ä¸å®ƒå…³è”ã€‚é€šå¸¸éƒ½æ˜¯åŒ…å¤´æœ‰é”™è¯¯æˆ–è€…é“¾æ¥è¢«dropä¹‹ç±»çš„ã€‚
 
 ========================================================
 NAT
-SNAT:POSTOUTINGÁ´
+SNAT:POSTOUTINGé“¾
 	-j SNAT --to-source 10.0.0.1 
-DNAT:PEREOUTINGÁ´
+DNAT:PEREOUTINGé“¾
 	-j DNAT --to-dest  20.0.0.2
 OUTPUT:
-	-j DNAT --to-dest  20.0.0.2 (Õë¶Ô·À»ğÇ½×ÔÉíÏëÒªÉÏÍøµÄÇé¿ö)
+	-j DNAT --to-dest  20.0.0.2 (é’ˆå¯¹é˜²ç«å¢™è‡ªèº«æƒ³è¦ä¸Šç½‘çš„æƒ…å†µ)
 	
-¶¯Ì¬µØÖ·×ª»»
-	-j MASQUERADE   (×Ô¶¯±ä»»¹«ÍøIPµÄÇé¿öÏÂÊ¹ÓÃÕâ¸ö¶¯×÷£¬Ëü»á¸ù¾İÍø¿¨IP×Ô¶¯±ä»»)
+åŠ¨æ€åœ°å€è½¬æ¢
+	-j MASQUERADE   (è‡ªåŠ¨å˜æ¢å…¬ç½‘IPçš„æƒ…å†µä¸‹ä½¿ç”¨è¿™ä¸ªåŠ¨ä½œï¼Œå®ƒä¼šæ ¹æ®ç½‘å¡IPè‡ªåŠ¨å˜æ¢)
 
 ===============================================================================
 firewall 
-RHEL7ÖĞÄ¬ÈÏ¿ªÆôµÄÊÇfirewalld£¬ÁíÍâ»¹¿ÉÒÔÊ¹ÓÃiptables,»òÕßebtables¡£
+RHEL7ä¸­é»˜è®¤å¼€å¯çš„æ˜¯firewalldï¼Œå¦å¤–è¿˜å¯ä»¥ä½¿ç”¨iptables,æˆ–è€…ebtablesã€‚
 
-ÎªÁË·ÀÖ¹·À»ğÇ½Ö®¼ä²úÉú³åÍ»£¬½¨Òé¹Ø±Õ£º
+ä¸ºäº†é˜²æ­¢é˜²ç«å¢™ä¹‹é—´äº§ç”Ÿå†²çªï¼Œå»ºè®®å…³é—­ï¼š
 systemctl disable ebtables.service
 systemctl stop  ebtables.service
 systemctl mask   ebtables.service
 
-ÊØ»¤½ø³Ì£ºfirewalld,ÓĞÁ½ÖÖ×´Ì¬£¬runtimeºÍpermanent¡£runtimeÊÇÄ¬ÈÏ×´Ì¬£¬ÔÚÕâ¸ö×´Ì¬ÏÂ×öµÄÉèÖÃ£¬Á¢¼´ÉúĞ§£¬µ«·şÎñ»ò·şÎñÆ÷ÖØÆô£¬Ê§Ğ§¡£permanent×´Ì¬ÊÇÓÀ¾ÃÉúĞ§µÄ£¬µ«ÔÚÕâ¸ö×´Ì¬ÏÂ×öµÄÅäÖÃ±ØĞëÔÚ·şÎñ»òÕß·şÎñÆ÷ÖØÆôºó²Å»áÉúĞ§¡£
+å®ˆæŠ¤è¿›ç¨‹ï¼šfirewalld,æœ‰ä¸¤ç§çŠ¶æ€ï¼Œruntimeå’Œpermanentã€‚runtimeæ˜¯é»˜è®¤çŠ¶æ€ï¼Œåœ¨è¿™ä¸ªçŠ¶æ€ä¸‹åšçš„è®¾ç½®ï¼Œç«‹å³ç”Ÿæ•ˆï¼Œä½†æœåŠ¡æˆ–æœåŠ¡å™¨é‡å¯ï¼Œå¤±æ•ˆã€‚permanentçŠ¶æ€æ˜¯æ°¸ä¹…ç”Ÿæ•ˆçš„ï¼Œä½†åœ¨è¿™ä¸ªçŠ¶æ€ä¸‹åšçš„é…ç½®å¿…é¡»åœ¨æœåŠ¡æˆ–è€…æœåŠ¡å™¨é‡å¯åæ‰ä¼šç”Ÿæ•ˆã€‚
 
-firewallÖĞÌí¼ÓÁËÇøÓòµÄ¸ÅÄî£º
-drop£º×îÑÏ¸ñµÄ²ßÂÔ¡£¶ªÆúËùÓĞ£¬²»¸ø³öÈÎºÎÌáÊ¾¡£
-block:Ìá¹©¸ödropÏàÍ¬µÄ²ßÂÔ£¬µ«»á¸ø³öÌáÊ¾ĞÅÏ¢¡£
-trusted:Ìá¹©×î¿íËÉµÄ²ßÂÔ£¬·ÅĞĞËùÓĞ¡££¨Ïàµ±ÓÚiptables -F£©
-public:Ä¬ÈÏÇøÓò¡£
-Õë¶Ô²»Í¬µÄÇøÓòÌá¹©²»Í¬µÄÄ¬ÈÏ²ßÂÔ£¬¿ÉÒÔÕë¶Ôservices(¾ßÌå·şÎñ)¡¢ports¶Ë¿Ú¡¢nat¡¢¶Ë¿ÚÓ³Éä¡¢icmp¹ıÂËÒÔ¼°¸»¹æÔòµÄÉèÖÃ¡£
+firewallä¸­æ·»åŠ äº†åŒºåŸŸçš„æ¦‚å¿µï¼š
+dropï¼šæœ€ä¸¥æ ¼çš„ç­–ç•¥ã€‚ä¸¢å¼ƒæ‰€æœ‰ï¼Œä¸ç»™å‡ºä»»ä½•æç¤ºã€‚
+block:æä¾›ä¸ªdropç›¸åŒçš„ç­–ç•¥ï¼Œä½†ä¼šç»™å‡ºæç¤ºä¿¡æ¯ã€‚
+trusted:æä¾›æœ€å®½æ¾çš„ç­–ç•¥ï¼Œæ”¾è¡Œæ‰€æœ‰ã€‚ï¼ˆç›¸å½“äºiptables -Fï¼‰
+public:é»˜è®¤åŒºåŸŸã€‚
+é’ˆå¯¹ä¸åŒçš„åŒºåŸŸæä¾›ä¸åŒçš„é»˜è®¤ç­–ç•¥ï¼Œå¯ä»¥é’ˆå¯¹services(å…·ä½“æœåŠ¡)ã€portsç«¯å£ã€natã€ç«¯å£æ˜ å°„ã€icmpè¿‡æ»¤ä»¥åŠå¯Œè§„åˆ™çš„è®¾ç½®ã€‚
 
-firewall-cmd --get-default-zone            ²é¿´Ä¬ÈÏÇøÓò
-firewall-cmd --get-zones                   ²é¿´ËùÓĞÇøÓò
-firewall-cmd --set-default-zone=public     ÉèÖÃÄ¬ÈÏÇøÓò
-firewall-cmd --get-services                ²é¿´ËùÓĞ·şÎñ
-firewall-cmd --zone=trusted --list-all     ²é¿´Ä³ÇøÓòµÄËùÓĞĞÅÏ¢
-firewall-cmd --get-zone-of-interface=eno16777736      ²é¿´Ä³¿éÍø¿¨¶ÔÓ¦µÄÇøÓò
-firewall-cmd --zone=home --add/change-interface=eno16777736  ½«Ä³¿éÍø¿¨Ìí¼Ó/¸ü¸Äµ½homeÇøÓò
-firewall-cmd --zone=home --query-service=http         ²éÑ¯Ä³ÇøÓòÖĞÊÇ·ñ°üº¬Ä³·şÎñ
-firewall-cmd --zone=home --add-service=http           ½«Ä³·şÎñÌí¼Óµ½Ä³Íø¿¨
-firewall-cmd --zone=home --add-port=445/tcp  --permanent   ½«ÅäÖÃĞ´Èëpermanent×´Ì¬£¬ÏÂ´ÎÆô¶¯ÉúĞ§¡£
+firewall-cmd --get-default-zone            æŸ¥çœ‹é»˜è®¤åŒºåŸŸ
+firewall-cmd --get-zones                   æŸ¥çœ‹æ‰€æœ‰åŒºåŸŸ
+firewall-cmd --set-default-zone=public     è®¾ç½®é»˜è®¤åŒºåŸŸ
+firewall-cmd --get-services                æŸ¥çœ‹æ‰€æœ‰æœåŠ¡
+firewall-cmd --zone=trusted --list-all     æŸ¥çœ‹æŸåŒºåŸŸçš„æ‰€æœ‰ä¿¡æ¯
+firewall-cmd --get-zone-of-interface=eno16777736      æŸ¥çœ‹æŸå—ç½‘å¡å¯¹åº”çš„åŒºåŸŸ
+firewall-cmd --zone=home --add/change-interface=eno16777736  å°†æŸå—ç½‘å¡æ·»åŠ /æ›´æ”¹åˆ°homeåŒºåŸŸ
+firewall-cmd --zone=home --query-service=http         æŸ¥è¯¢æŸåŒºåŸŸä¸­æ˜¯å¦åŒ…å«æŸæœåŠ¡
+firewall-cmd --zone=home --add-service=http           å°†æŸæœåŠ¡æ·»åŠ åˆ°æŸç½‘å¡
+firewall-cmd --zone=home --add-port=445/tcp  --permanent   å°†é…ç½®å†™å…¥permanentçŠ¶æ€ï¼Œä¸‹æ¬¡å¯åŠ¨ç”Ÿæ•ˆã€‚
 
-¸»¹æÔò£º
-firewall-cmd --list-rich-rules      ²é¿´¸»¹æÔò
+å¯Œè§„åˆ™ï¼š
+firewall-cmd --list-rich-rules      æŸ¥çœ‹å¯Œè§„åˆ™
 firewall-cmd --add-forward-port port=80:proto=tcp;toaddr=20.0.0.2:toport=80   
-firewall-cmd --add-masquerade       ÒÑÓÃnatÎ±×°
+firewall-cmd --add-masquerade       å·²ç”¨natä¼ªè£…
 			 --add-rich-rules='rule family=ipv4 source address=20.0.0.0/24 masquerade' 
