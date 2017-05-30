@@ -38,3 +38,8 @@ ECC 椭圆曲线加密算法
 通过GnuPG加密保护文件
 ~/.gnupg/   这个目录下存放了公钥和私钥
 gpg --gen-key    生成公钥
+gpg --import  public.key  导入公钥
+	--import-secret-key secret-key.key  导入私钥
+gpg --export  -a  以ascii码输出公钥
+gpg -e -a -r xxxxxxxx  xx.txt    指定钥匙指纹以ascii码的格式加密xx.txt文件
+gpg xx.txt.asc    解密xx.txt.asc文件

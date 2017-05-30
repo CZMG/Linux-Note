@@ -31,6 +31,13 @@ subnet ip netmask {
 
 [root@centos6 ~]# cat /var/lib/dhclient/dhclient-eth0.leases  在客户端上可以查看dhcp的租约等数据信息
 ==============================
+绑定固定IP
+host passacaglia {
+   hardware ethernet 0:0:c0:5d:bd:95;
+   filename "vmunix.passacaglia";
+   server-name "toccata.fugue.com";
+}
+==============================
 超级作用域（一块网卡，多个网段）
 shared-network 11-12 {
 	subnet ip netmask {
