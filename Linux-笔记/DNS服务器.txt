@@ -1,0 +1,177 @@
+﻿DNS服务器
+===============================================
+Domain Name Server/System
+DNS  使用UDP协议53号端口和TCP协议（服务器间交流）
+工作方式：递归和迭代
+递归查询：客户端--服务器
+13台根域服务器：A-M
+迭代查询：服务器--服务器
+
+yum install jwhois      jwhois用于查询域名
+===============================================
+CentOS 6  --named
+1、服务器的安装（chroot）
+yum install bind bind-chroot
+安装DNS服务器，出于安全考虑，我们同时安装bind-chroot来隔离环境。主要是防止渗透者在攻破dns服务器后在真实根目录下的一些操作。
+注：默认情况下，dns服务器的主配置文件是/etc/named.conf，数据文件在/var/named的目录下。但是，因为我们使用了chroot隔离，所以，默认的文件我们都不使用。chroot后的根是/var/named/chroot/。
+
+service named restart  
+重启服务后chroot下的配置文件会自动生成。
+
+主配置文件：/var/named/chroot/etc/named.conf
+
+options {
+//从这里开始就是全局的设置，默认只监听自己的，改为监听所有      
+        listen-on port 53 { any; };
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+//区域文件存储路径，因为做了chroot，这里的/其实是/var/named/chroot
+        dump-file       "/var/named/data/cache_dump.db";
+//往下三行内容都是进行统计的
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+//允许谁进行DNS查询
+        allow-query     { any; };
+//是否允许DNS转发，理解为我们就是一台从dns服务器
+//      allow-transfer  { none; };
+//是否开启递归查询
+        recursion yes;
+
+//      dnssec-enable yes;
+//      dnssec-validation yes;
+
+//      /* Path to ISC DLV key */
+//      bindkeys-file "/etc/named.iscdlv.key";
+//动态管理秘钥
+//      managed-keys-directory "/var/named/dynamic";
+};
+
+注意：删除以下2行，不需要认证，否则重启后，服务就挂了
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";
+
+named-checkconf
+注意：配置完成后一定要通过语法检测，否则重启服务会导致chroot中的所有配置文件丢失。
+
+cp named.localhost google.com.zone 
+chown root:named google.com.zone 
+====================================
+DNS服务器配置中的类型：
+NS：name server
+A:  A记录，address
+PTR：反向解析
+CNAME：别名
+MX：email，邮件服务器
+
+
+vim /var/named/chroot/etc/google.com.zone
+$TTL 1D
+google.com.   IN  SOA  dns.google.com. root@google.com. (0 1D 1H 1W 3H)
+google.com.       
+注：SOA 表示一个DNS服务器的开头，无论如何都要写。
+
+测试：
+host www.lf.com   解析一个域名
+host -l lf.com    解析一个域内所有域名
+host 10.1.1.1
+===============================
+反向解析
+zone "4.162.192.in-addr.arpa" IN {
+	type master;
+	file "example.com.arpa"
+====================================
+主从DNS服务器
+为了保证服务的高可用性，要求每个区域中有多台DNS能提供冗余服务。
+zone "example.com" IN {
+	type slave;
+	file "salves/example.com.zone";
+	masters { 192.168.4.137; };
+};
+这里的数据文件要放在slave目录下，masters定义的主DNS服务器
+
+在主DNS服务器上添加如下内容：
+allow-transfer { 192.168.4.137; };
+授权从服务器,当主服务器不能工作时，从服务器可以接任工作。
+=======================================
+事务数字签名（TSIG）（使用TCP协议）
+为了防止主从服务器之间被第三方拦截同步信息，可以使用TSIG事务签名认证
+主服务器配置：
+dnssec-keygen -a HMAC-md5 -b 256 -n HOST hf    使用工具生成一对秘钥，一个是key,一个是private.
+
+allow-transfer { key hf; };
+
+server 192.168.4.139 {   //指向从服务器
+	keys { hf ; };
+};
+key hf {
+	algorithem hmac-md5;
+	secert ******************* ;
+};
+
+从服务器配置：
+server 192.168.4.137 {   //指向主服务器
+	keys { hf ; };
+};
+key hf {
+	algorithem hmac-md5;
+	secert ******************* ;
+};
+========================================
+基于视图的DNS
+bind 的服务器都支持view功能，我们叫视图功能。
+
+//定义一个acl,将需要匹配的网段或主机放入表中。
+acl cncuser { 192.168.4.200; };
+acl cmcc    { 192.168.4.100; };
+
+//针对不同的acl定义不同的视图
+view "cnc" {
+	match-clients { cncuser; };
+};
+zone "cnc.example.com" IN {
+	type master;
+	file "cnc.example.com.zone";
+};
+==========================================
+DNS的子域授权
+hosts文件本身就是为了缓解dns服务器的压力。
+
+	根域--com域--example.com--hf.example.com（二级域）
+
+子域配置：	
+options里添加：
+	forwarders { 192.168.4.137; };
+//指明当前子域无法完成解析时，可以转交给137进行解析。
+
+添加子域的解析文件:hf.example.com.zone
+
+在父域解析文件中加入：
+		NS sdns.hf.example.com
+sdns	A  192.168.4.154 
+
+==================================================================================
+RHEL 7 
+unbound（官方推荐） 和 dnsmasq(openstack)
+安装：yum install unbound 
+主配置文件：/etc/unbound/unbound.conf
+
+38    interface: 0.0.0.0     默认监听所有
+211   username：""           取消用户名认证
+      access 0.0.0.0/0 allow
+
+修改主机名
+hostnamectl set-hostname rhel7.dns
+
+vim test.com.conf
+  3 local-zone: "test.com." static
+  4 local-data: "test.com. 86400 IN SOA rhel7.test.com. root 0 1000 1000 1000 1000"
+  5 local-data: "rhel7.test.com. 86400 IN A 10.0.0.2"
+  6 local-data: "www.test.com. 86400 IN A 1.1.1.1"
+  7 local-data: "ftp.test.com. 86400 IN A 2.2.2.2"
+=============================================================================
+仅缓存服务器
+/etc/unbound/local.d/cache.conf 
+forward-zone:
+      name: "*"             //*表示对所有域名进行转发
+      forward-addr: 192.0.2.68
+=========================================================================
