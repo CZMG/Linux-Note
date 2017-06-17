@@ -125,6 +125,12 @@ Alias /a/ "/var/www/a/"
 
 elinks www.example.com --dump  
 出现问题：查防火墙，selinux()，semanage
+
+修改端口的安全上下文
+yum install semanage
+semanage port -l | grep 80
+semanage port --del -t http_port_t -p tcp 8080
+semanage port --add -t http_port_t -p tcp 8090
 ==========================================================
 web 的TLS
 SSL secure socket layer
