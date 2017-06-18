@@ -1,0 +1,59 @@
+LAMP 服务器的部署--bbs
+L--linux           作为底层操作系统
+A--apache		   作为web服务的前端
+M--mariadb         数据库用来存储数据
+P--php/perl/python 编程语言
+
+www.phpbb.com
+
+1、安装apache，并配置
+2、搭建mariadb数据库
+	cp /usr/share/mysql/my-huge.cnf /etc/my.cnf
+3、安装php及某些模块
+	yum install php php-mysql phpgd libjpeg* php-ldap php-odbc php-pera php-xml php-xmlpc php-mahash
+4、配置httpd
+vim /etc/httpd.d/conf/httpd.conf	
+129  Options INCLUDES ExecCGI FollowSymLinks 
+让服务器允许执行CGI等指令，禁止列出目录
+269	 AddHandler cgi-script .cgi .pl .py 
+允许服务器执行后缀为cgi的脚本，可以添加其他的自定义脚本的后缀
+292  AddDefaultcharset  
+
+5、配置php
+878	  date.timezone = RPC 
+314   disable_functions = passthru,exec,system,chroot,scandir,chgrp,chown,shell_exec,proc_open,proc_get_status,ini_alter,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server,escapeshellcmd,dll,popen,disk_free_space,checkdnsrr,checkdnsrr,getservbyname,getservbyport,disk_total_space,posix_ctermid,posix_get_last_error,posix_getcwd, posix_getegid,posix_geteuid,posix_getgid, posix_getgrgid,posix_getgrnam,posix_getgroups,posix_getlogin,posix_getpgid,posix_getpgrp,posix_getpid, posix_getppid,posix_getpwnam,posix_getpwuid, posix_getrlimit, posix_getsid,posix_getuid,posix_isatty, posix_kill,posix_mkfifo,posix_setegid,posix_seteuid,posix_setgid, posix_setpgid,posix_setsid,posix_setuid,posix_strerror,posix_times,posix_ttyname,posix_uname
+#列出PHP可以禁用的函数，如果某些程序需要用到这个函数，可以删除，取消禁用。
+expose_php = Off #禁止显示php版本的信息 
+magic_quotes_gpc = On #打开magic_quotes_gpc来防止SQL注入 
+short_open_tag = ON #支持php短标签
+open_basedir =                   #写上程序的目录，定义为自己的目录
+
+[root@hf ~]#systemctl restart mariadb.service #重启MariaDB 
+[root@hf ~]#systemctl restart httpd.service #重启apache 
+
+6、测试
+[root@hf ~]# cd /var/www/html 
+[root@hf ~]#vim index.php #输入下面内容
+ <?php 
+phpinfo(); 
+?> 
+=================================================================================
+LEMP
+L--linux
+(E)N--nginx(俄罗斯开发)
+M--mariadb
+P--php/perl/python
+
+1、安装nginx
+	使用epel源或第三方源安装
+	yum install nginx
+2、yum install php-fpm
+==================================================================================
+LANMP
+L--linux
+A--apache
+N--nginx
+M--mariadb 
+P--php/perl/python
+
+=================================================================================================================
