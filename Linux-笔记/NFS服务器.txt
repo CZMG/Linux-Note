@@ -7,12 +7,54 @@ SAN，存储区域网络（块共享）
 如果有条件的情况下，要尽量使用nfs共享（必须使用文件共享的前提），nfs的性能理论来说要高于windows的30%。
 NFS的本身不具备传输的能力，将由rpc模块来完成调用daemons实现传输的目的。
 
-nfs自身的端口是tcp和udp的2049，rpc自身的端口是tcp和udp的2049，客户端在链接nfs服务器时，rpc负责告诉客户端你要链接的端口是多少，这些端口是由rpc随机产生的。
+nfs自身的端口是tcp和udp的2049，rpc自身的端口是tcp和udp的111，客户端在链接nfs服务器时，rpc负责告诉客户端你要链接的端口是多少，这些端口是由rpc随机产生的。
 rpcinfo -p localhost        查看当前rpc分配地端口
-因为是随机分配的，每次重启服务都会产生变化，这就给防火墙的策略配置
+因为是随机分配的，每次重启服务都会产生变化，这就给防火墙的策略配置带来了问题，我们需要人为的将rcp产生的端口绑定。
+
+nfs的主配置文件位置
 /etc/sysconfig/nfs    
-指定端口：20,22,57,
+
+指定端口：
+锁
+20    LOCKD_TCPPORT=6000
+22    LOCKD_UDPPORT=6000
+挂载
+57    MOUNTD_PORT=6001
+
 防火墙放行
+111,2049,6000,6001端口(tcp & udp)
+
+nfs共享配置文件（需要手写）
+vim /etc/exports
+/share 192.168.24.0/24(rw,sync)
+
+查看共享信息
+需要showmount
+yum install nfs-utils
+showmount -e  192.168.24.29       查看remote机器上发布的共享信息
+mount 192.168.24.29:/share /xx/   使用网络共享，将共享目录挂载到本地的xx目录下
+mount   查看挂载信息
+
+cat /var/lib/nfs/etab   挂载成功后这个文件中会记录客户端对共享目录的默认权限
+
+nfs配置文件参数说明：
+ro
+rw
+sync   立即写入硬盘（慢）
+async   之写入内存，不写入硬盘（快）
+wdelay  如果多个用户要写入共享目录，就归组写入
+no_wdelay  如果多个用户要写入，不用考虑归组，立即sync
+hide     默认不共享子目录
+nocrossmnt  不能做二次共享
+secure       nfs必须使用1024以下端口发送
+root_squash  root用户的请求会被映射成为匿名用户的权限(nfsnobody)
+anonuid=500,anongid=500    指定登录进来的用户名，而不会是nonfsbody
+
+注意：实际的生产环境中，如果nfs服务做了修改，不建议重启服务。可以通过重新挂载实现。
+
+exportfs 
+	-arv     使用重新挂载。a表示所有，r表示重新挂载，v表示显示结果。
+	-au      卸载当前的共享
 
 新建共享文件夹/share
 vim /etc/exports     这里就是设置共享目录的配置文件
@@ -22,3 +64,24 @@ rhel7
 yum install nfs
 systemctl enable nfs
 systemctl restart nfs
+
+7中不需要考虑防火墙对rpc锁端口的问题，firewall会动态跟踪，只需要放行服务。(rpc-bind)
+
+配置文件位置 /etc/sysconfig/nfs
+
+======================================================================
+共享目录的自动挂载
+不同于fstab的静态挂载，fstab会采用动态形式的挂载。当用户访问一个尚未挂载的文件系统，autofs会自动挂载，当超过超时时间用户没有操作该文件系统，autofs会自动卸载该文件系统。
+
+autofs的主配置文件目录
+/etc/auotfs.master
+
+/misc  /etc/auto.misc
+自动挂载的目录    自动挂载中使用的参数都由这个文件定义
+例：
+/-      /etc/auto.nfs
+挂载目录和参数都由/etc/auto.nfs文件定义
+
+/etc/auto.misc
+cd     -ftype=iso9660,ro,nosuid,nodev :/dev/cdrom
+需要挂载目录   类型、权限等                挂载目录
