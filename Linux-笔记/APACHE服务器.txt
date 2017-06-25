@@ -85,6 +85,7 @@ Alias /a/ "/var/www/a/"
 		ErrorLog logs/www2.linuxidc.com-error_log 
 		CustomLog logs/www2.linuxidc.com-access_log common 
 	</VirtualHost>
+注：httpd-vhosts.conf    应放在conf.d/而不是conf/下。
 
 基于IP地址的虚拟主机:
 	在同一台服务器上提供多个ip地址访问不同的域名
