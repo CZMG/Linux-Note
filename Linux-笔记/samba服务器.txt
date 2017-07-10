@@ -1,0 +1,106 @@
+samba被称为一个伟大的创造。它能够实现在类unxi和win之间的共享，弥补了nfs的不足。samba支持建立域以及加入域，可以模拟称为ad域中的DC。
+
+samba服务器的daemons由nmbd和smbd来提供。其中nmbd是为比较古老的协议提供服务支持的，现在已经很少使用。
+
+samba 端口： udp 137 138 , tcp 139 445 
+安装samba
+yum install samba
+=============================================
+主配置文件
+/etc/samba/smb.conf
+
+网络配置：
+workgroup  工作组
+server string  samba服务器的版本号
+betbios name   跟windows相关的配置
+interfaces   监听的端口、网卡、IP等
+hosts allow  允许访问samba服务器的地址
+
+安全配置：
+security = user 
+	验证方式：
+		1、share：匿名访问，安全性不高(注意：security=share,启动服务时会失败，这种方式只能在samba4.0版本以前使用。在4.0版本中增加了安全属性，不支持匿名登录。不许通过map to guest来实现。security = user ,map to guest = Bad User)
+		2、user:  用户必须提供账号和密码登陆，本地需要提供账号密码的数据库
+		3、server: 通过ldap等服务器的认证
+passdb backend = tdbsam 
+	用户后台的数据库。通常有tdbsam（在/etc/samba目录下有数据文件passwd.db）、smbpasswd(在/etc/samba目录下有文件)以及ldapsam。
+
+打印机的设置：
+load printers = yes  是否在启动samba时自动启动打印机
+cups options = raw   打印机的共享配置权限
+printcap name = /etc/printcap 打印机的名称
+
+文件共享配置：
+[homes]       设定共享目录
+	commnent = Home Directories   对共享的描述信息
+	browseable = no               是否允许浏览
+	writable = yes                是否允许写入
+	path = /var/spool/samba       指定共享的路径
+	guest ok = yes                是否允许匿名用户访问
+	share modes = no              共享的模式
+	public = yes                  是否允许公开访问
+	printable = no                是否允许使用打印 
+	write list = tom (+staff)     写入列表,无+是人，有+为组
+	
+testparm      检测smb.conf配置文件的语法的工具
+==============================================================
+useradd -s /sbin/nologin tom    创建一个登录samba服务的账户，但不能登录本地shell
+pdbedit -a -t tom    给tom添加samba的密码
+smbpasswd -a tom     给tom添加samba的密码
+
+windows访问：
+\\samba.examaple.com
+
+Linux访问：
+smbclient -L //samba.example.com
+如果要让用户能够拥有写入权限，那么需要保证该共享文件夹需要有w权限。
+
+使用browseable = no ,那么客户端在访问时看不到共享目录，但是在共享地址后加上共享目录的路径即可访问，例：\\samba.example.com\MOVIE
+==============================================================
+防火墙放行
+firewall-cmd --add-service=samba
+
+Selinux 设置
+setsebool -P samba_domain_controller on                     : allow Samba to use the useradd and groupadd family of binaries.
+setsebool -P samba_enable_home_dirs on                      ：share home directories via Samba.
+chcon -t samba_share_t /path/to/directory 
+semanage -a -t samba_share_t '/path/to/directory(/.*)?')    : allow Samba to read and write to the new directory.
+setsebool -P samba_export_all_ro(rw) on                     : to share such directories and allow read and write permissions.
+===========================================================
+安全性设置
+根据登录的不同的用户，使用不同的配置文件，看到不同的内容：
+[global]
+config file = /etc/samba/smb.conf.%U   (%U表示根据用户名自动查找)
+cp /etc/samba/smb.conf.example /etc/samba/smb.conf.tom
+===========================================================
+samba 搭建PDC  与 加入域（可以实现，但生产环境不建议这么做）
+vim /etc/samba/smb.conf
+--Domain Controller Option--
+security = user 
+passdb backend = tdbsam
+domain master = yes    将samba服务器定义为主域服务器
+domain logons = yes 
+logon script = start.bat
+logon path =\\%N\%U\profile      %U 表示IP，%U表示用户
+
+--Browser Controller Option--
+local master = yes        是否本地是主域服务器
+os level = 100            级别          
+preferred master = yes
+wins support = yes        使用windows 客户端，可开启
+
+
+mkdir /home/samba/
+useradd -d /home/samba/jarry jarry 
+pdbedit -a -u jarry 
+mkdir /home/samba/netlogon
+vim /home/samba/netlogon/start.bat
+	net use c: /home  
+unix2dos /home/samba/netlogon/start.bat 
+
+pdbedit -a -t root
+useradd -M -d /dev/null -s /sbin/nologin test
+smbpasswd -m -a test$                    表示将客户端计算机加入域,$表示主机
+systemctl restart smb nmb 
+
+如果访问不到，在dns服务器里添加对example.com的解析。
