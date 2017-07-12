@@ -159,14 +159,21 @@ cd /etc/pki/tls/certs/
 make /etc/httpd/conf/test.crt
 
 
-针对特殊站点的认证
+针对特殊站点的认证:
+70    SSLEngine on          这是ssl的引擎，默认是on，表示全局启用ssl。如果只是希望对某一个站点进行tls传输，必须设置为off。
+
+在vhosts.conf的某个站点配置下加入
+SSLEngine on
+SSLCertificateFile /etc/httpd/conf/test.crt
+SSLCertificateKeyFile /etc/httpd/conf/test.key
+
 
 配置参考配置文件
 ===============================================================================
 服务器日志监测
 用epel源安装 webalizer
 /etc/httpd/conf.d/webalizer.conf
-webalizer          启动
+webalizer          启动（只有启动了才能访问）
 
 ================================================================================
 压力测试

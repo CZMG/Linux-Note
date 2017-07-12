@@ -22,8 +22,7 @@ security = user
 		1、share：匿名访问，安全性不高(注意：security=share,启动服务时会失败，这种方式只能在samba4.0版本以前使用。在4.0版本中增加了安全属性，不支持匿名登录。不许通过map to guest来实现。security = user ,map to guest = Bad User)
 		2、user:  用户必须提供账号和密码登陆，本地需要提供账号密码的数据库
 		3、server: 通过ldap等服务器的认证
-passdb backend = tdbsam 
-	用户后台的数据库。通常有tdbsam（在/etc/samba目录下有数据文件passwd.db）、smbpasswd(在/etc/samba目录下有文件)以及ldapsam。
+passdb backend = tdbsam  用户后台的数据库。通常有tdbsam（在/etc/samba目录下有数据文件passwd.db）、smbpasswd(在/etc/samba目录下有文件)以及ldapsam。
 
 打印机的设置：
 load printers = yes  是否在启动samba时自动启动打印机
@@ -53,9 +52,7 @@ windows访问：
 
 Linux访问：
 smbclient -L //samba.example.com
-如果要让用户能够拥有写入权限，那么需要保证该共享文件夹需要有w权限。
 
-使用browseable = no ,那么客户端在访问时看不到共享目录，但是在共享地址后加上共享目录的路径即可访问，例：\\samba.example.com\MOVIE
 ==============================================================
 防火墙放行
 firewall-cmd --add-service=samba
@@ -68,6 +65,11 @@ semanage -a -t samba_share_t '/path/to/directory(/.*)?')    : allow Samba to rea
 setsebool -P samba_export_all_ro(rw) on                     : to share such directories and allow read and write permissions.
 ===========================================================
 安全性设置
+
+如果要让用户能够拥有写入权限，那么需要保证该共享文件夹需要有w权限。
+
+使用browseable = no ,那么客户端在访问时看不到共享目录，但是在共享地址后加上共享目录的路径即可访问，例：\\samba.example.com\MOVIE
+
 根据登录的不同的用户，使用不同的配置文件，看到不同的内容：
 [global]
 config file = /etc/samba/smb.conf.%U   (%U表示根据用户名自动查找)
@@ -98,7 +100,7 @@ vim /home/samba/netlogon/start.bat
 	net use c: /home  
 unix2dos /home/samba/netlogon/start.bat 
 
-pdbedit -a -t root
+pdbedit -a -t root             添加域用户
 useradd -M -d /dev/null -s /sbin/nologin test
 smbpasswd -m -a test$                    表示将客户端计算机加入域,$表示主机
 systemctl restart smb nmb 
