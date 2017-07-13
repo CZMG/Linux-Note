@@ -77,6 +77,8 @@ iscsi
 		
 	acls\ create iqn.2015-11.com.example.domain11:system1
 	luns\ create /backstores/fileio/file1
+	portals\ delete 0.0.0.0 3260              删除默认的监听所有，不删除，后面创建会冲突
+	portals\ create 192.168.24.46
 	
 客户端：
 1、通过命令行，使用iscsiadm来发现和添加
