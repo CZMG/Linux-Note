@@ -1,0 +1,56 @@
+FTP服务器 
+ftp协议非常古老，设计之初没有考虑安全性，都是明文传输。rhel中使用的ftp工具叫vsftpd（very secrue ftp daemons ），特点就是安全。
+ftp是用来实现文件传输的。场景1：企业有数据共享给所有的员工，可以架设ftp服务器。
+场景2：idc一般提供的网站服务，客户端都需要通过ftp去上传和下载自己的网站数据。
+场景3：更新设备固件时会使用这种方式。
+
+FTP不支持UDP。
+
+安装ftp：
+[root@centos7 ~]# yum install vsftpd -y
+
+[root@centos7 ~]# ss -ntulp |grep vsftpd
+查看vsftpd启动后监听的端口，是tcp的21.
+实际上，它监听2个端口，一个tcp的21，还有一个是tcp的20。
+默认情况下我们看不到20端口，那是因为这个端口是在客户端和服务器端的连接建立之后才产生的。21端口是用来传递信令的，20端口是用来传输数据的。
+
+FTP的两种工作方式：
+主动模式（POST）和被动模式（PASV）
+主动模式：  
+客户端发起N端口-->服务器的21端口
+服务器的20端口-->客户端的N+1端口
+这个模式的弊端是服务器在连接客户端的过程中，如果遇到防火墙，很难通过。
+
+被动模式：
+客户端发起N端口-->服务器的21端口
+客户端的N+1端口-->服务器的P端口(随机高端口)
+这种模式就解决了主动模式下客户端的防火墙可能引起的问题，但对于服务器端的防火墙也需要进行额外的设置
+
+不论哪种模式，选择权都在客户端。winxp默认使用的就是主动模式。通常优先选择都是被动模式。
+
+[root@centos7 ~]# systemctl enable vsftpd
+[root@centos7 ~]# vim /etc/vsftpd/vsftpd.conf 
+
+防火墙放行：
+firewall-cmd --add-service=ftp 
+firewall-cmd --add-service=ftp --permanent
+
+默认情况下vsftpd 的主目录是/var/ftp/pub
+注：selinux开启的情况下，需要把下面的布尔值都打开才可以实现匿名写入，同时还要保证写入的目录有相应的权限
+ftpd_anon_write --> off
+ftpd_full_access --> off
+
+windows 命令行登录FTP
+匿名用户：ftp
+匿名用户密码：ftp
+
+tcpwapers限制用户登录ftp服务器
+vim /etc/host.deny
+vsftp: 192.168.24.
+
+限制用户上传到ftp服务器的文件类型：
+vim /etc/vsftpd/vsftpd.conf
+deny_file={*.exe}           拒绝用户上传.exe的文件
+
+Linux下的FTP工具：lftp
+yum install lftp
