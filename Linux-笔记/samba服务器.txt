@@ -53,6 +53,19 @@ windows访问：
 Linux访问：
 smbclient -L //samba.example.com
 
+
+客户端挂载samba共享需要先安装cifs-utils
+yum install cifs-utils
+
+挂载
+mount //192.168.0.18/finance /media/samba -o username=user1
+或者在/etc/fstab中添加：
+//192.168.0.18/finance /media/samba cifs credentials=/media/samba/.smbcredentials,defaults 0 0
+
+编辑共享的账户和密码：
+vim ~/.smbcredentials
+username=user1
+password=PasswordForUser1
 ==============================================================
 防火墙放行
 firewall-cmd --add-service=samba
@@ -83,7 +96,7 @@ passdb backend = tdbsam
 domain master = yes    将samba服务器定义为主域服务器
 domain logons = yes 
 logon script = start.bat
-logon path =\\%N\%U\profile      %U 表示IP，%U表示用户
+logon path =\\%N\%U\profile      %N表示IP，%U表示用户
 
 --Browser Controller Option--
 local master = yes        是否本地是主域服务器
@@ -106,3 +119,8 @@ smbpasswd -m -a test$                    表示将客户端计算机加入域,$表示主机
 systemctl restart smb nmb 
 
 如果访问不到，在dns服务器里添加对example.com的解析。
+=====================================================================================
+用Samba搭建PDC参考
+Setting Up Samba Primary Domain Controller On CentOS 7
+http://www.unixmen.com/setting-samba-primary-domain-controller-centos-7/
+=====================================================================================
