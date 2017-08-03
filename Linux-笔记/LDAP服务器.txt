@@ -294,6 +294,17 @@ x509标准
 变更证书等文件为ldap
 
 [root@centos7 ~]# vim mod_ssl.ldif   编辑数据文件，主要是指明密钥和证书的路径
+dn: cn=config
+changetype: modify
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/openldap/certs/ca-bundle.crt
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/openldap/certs/ldap.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/openldap/certs/ldap.key
+
 
 [root@centos7 ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f mod_ssl.ldif 
 将编辑的文件导入ldap
