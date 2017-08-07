@@ -1,0 +1,84 @@
+==============================================================================================================================
+VPN
+==============================================================================================================================
+Virtual private network (虚拟专有网络)
+点到点的隧道协议--PPTP
+第二层的隧道协议--L2TP
+网络层的隧道协议--IPsec(openvpn)     TLSVPN(SSLVPN)
+==============================================================================================================================
+PPTP VPN 服务器
+拨号连接
+point to point ，算法：pap,chap,MPPE(微软)
+
+封装
+1、数据包首先被封装在IP包中
+2、这个IP包再背封装在PPP包中
+3、这个PPP包会被实现协商的算法加密
+4、最后用一个IP包来封装
+
+解封装
+1、服务器端受到后识别IP包，然后解封IP包
+2、用事先协商的算法解密，发现这个PPP包
+3、PPP包头移除
+4、根据最里面的IP包进行路由
+==============================================================================================================================
+MPPE来实现的PPTP VPN
+PPTP协议把控制和数据分开，控制采用的是TCP协议，端口1723端口。数据会被封装在PPP包中，加密后再封装一层IP包传输。
+==============================================================================================================================
+PPTP VPN实施：
+安装PPP套件，默认PPP洗衣系统内置的
+lsmod | grep ppp               查看是否有PPP模块
+modprobe ppp-compress-18       手动启动PPP模块
+
+/etc/pptpd.conf                 这个是主配置文件
+/etc/ppp/options.pptpd          这个文件是用来实现PPP传输过程中的加密
+
+TAG：localip     这个定义的是vpn服务器的本地IP地址，这个地址可以是虚拟地址，也可以设置为和remoteip不同的网段。
+TAG: remoteip    客户端链接服务器成功后vpn服务器分发给客户端的地址，这个地址可以是一个内网的地址，也可以是一个和内网不同的地址。
+
+/etc/ppp/chap-secrets           设置账户密码认证
+"hf"	"vpntest"	"password"	*                     *表示给到什么地址就用什么地址，也可以为该客户端指定IP
+用户名	服务器名称（必须和options.pptpd中的对应）	密码	自动获取IP
+
+service pptpd  restart
+netstat -ntulp | grep :1723
+
+开启IPv4转发：
+cat /etc/sysctl.conf
+
+防火墙放行：
+iptables -I INPUT 1 -p tcp --dport 1723 -j ACCEPT 
+iptables -I INPUT -p gre -j ACCEPT                  放行GRE
+iptables -I FORWARD -p icmp --dest 192.168.24.0/24 -j ACCEPT 
+==============================================================================================================================
+openvpn是一个基于openssl库来实现的vpn开源工具。和pptp等vpn相比，它的特点安全。它也是我们在生产环境中所有最多vpn方案。
+工作原理：产生一块抽象的虚拟网卡，当需要交流时，数据包或者数据帧发送给虚拟网卡，虚拟网卡对数据按照事先双方协商的加密或者hmac等算法进行处理，从物理网卡发出。
+==============================================================================================================================
+[root@RB ~]# yum install openssl openssl-devel -y
+openssl是用来实现openvpn加密的，需要安装。
+heartbleed漏洞，检查一下openssl是否有这个漏洞
+[root@RB ~]# openssl version  检查版本
+[root@RB ~]# yum install lzo
+lzo工具用来实现快速的压缩和解压缩，它提供的是一种加速的无损解压缩算法，可以在openvpn数据传输过程中提升性能
+[root@RB ~]# yum install openvpn easy-rsa
+通过安装epel源安装openvpn和easy-rsa（提供rsa的算法）
+
+1、生成openvpn的证书密钥
+[root@RB ~]# vim /usr/share/easy-rsa/2.0/vars 
+设置环境变量
+[root@RB ~]# cd /usr/share/easy-rsa/2.0/
+[root@RB 2.0]# ./build-ca   生成证书
+[root@RB 2.0]# ./build-key-server server
+为服务器生成证书还有请求文件和私钥文件。server是服务器默认的名字，如果设置了其他名称，最后必须将证书和密钥修改为统一的名称。
+[root@RB 2.0]# ./build-key client   生成客户端的证书、证书请求文件以及私钥，如果在生产环境中就需要为每个客户生产各自的文件
+[root@RB 2.0]# ./build-dh  使用dh算法实现密钥交换，主要是为了增强openvpn传输的安全性
+[root@RB keys]# openvpn --genkey --secret keys/ta.key
+可以在生产环境中阻止ddos等恶意攻击的密钥
+[root@RB sample-config-files]# pwd
+/usr/share/doc/openvpn-2.4.3/sample/sample-config-files
+[root@RB sample-config-files]# cp server.conf  /etc/openvpn/
+拷贝openvpn的配置模板到配置目录下
+
+[root@RB 2.0]# iptables -I FORWARD  -p all --dest 192.168.24.0/24 -j ACCEPT
+
+[root@RB 2.0]# iptables -I INPUT   -p tcp --dport 1194 -j ACCEPT

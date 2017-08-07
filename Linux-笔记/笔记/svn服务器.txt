@@ -1,0 +1,89 @@
+========================================================================================================================
+SVN服务器
+========================================================================================================================
+SVN 是 subversion  的简称，是一个开源的版本控制的系统。相较于rcs、cvs等其他的版本控制系统，提供了更强大的功能，支持更多的特性。
+
+常见的版本控制软件：cvs svn github
+svn能够很好的识别到冲突，并处理
+支持并行开发（分支的合并）
+支持本地离线操作
+场景：主要部署在企业内部，作为git的替代。敏感代码存储在svn上，其他的可以根据需要存放到git上。
+========================================================================================================================
+svn部署的两种方式：
+1、作为服务器单独运行（C/S架构）  3690
+2、作为服务器结合一些模块（http） 借助于apache运行   80
+========================================================================================================================
+作为服务器单独运行：
+[root@DNS ~]# yum install subversion -y             安装
+[root@DNS ~]# yum install httpd\* -y  
+[root@DNS ~]# yum install mod_dav_svn -y            如果需要使用http访问svn，需要安装这个模块连接svn和apache
+[root@DNS ~]# useradd  svn                          建立一个专门用来管理仓库的用户
+[root@DNS ~]# mkdir /var/repos                      建立一个仓库目录
+[root@DNS ~]# chown svn.svn /var/repos/             修改仓库所有者和所属组
+[root@DNS ~]# svnadmin create /var/repos/svn1       使用svn工具创建版本仓库
+[root@DNS conf]# ls                                 成功后会在仓库目录中生成svn的元数据文件
+authz 权限和认证
+passwd   用户和密码 
+svnserve.conf   服务器的配置
+
+[root@DNS conf]# svnserve -d -r /var/repos/ 
+svn的启动必须通过管理库的目录来执行，参数-d表示svn的daemons会在后台执行，-r指定了仓库的根目录
+[root@DNS conf]# vim /etc/rc.local   设置svn服务开机自动运行，添加如下指令到rc.local
+	/usr/bin/svnserver -d -r /var/repos/
+
+停止服务：
+[root@DNS conf]# ps -aux | grep svnserve     找到该服务
+[root@DNS conf]#kill -9 42400                杀死该进程
+
+防火墙放行
+iptables -I INPUT -p tcp --dport 3690 -j ACCEPT
+==================================================================================================
+使用方法：
+[root@DNS ~]# svn import figlet/ file:///var/repos/svn1 -m 'svn1 version1'        将一个软件包figlet提交到本地的仓库svn1下，并添加注释信息。
+注：我们默认使用的是fsfs存储方式（基本上取代了bdb这种数据库存储的方式）。当文件被上传后，会以一堆数字来表示，都被压缩成了二进制文件。fsfs格式是以增量的方式来记录和存放数据的。svn先把0压缩成一个文件，然后每次版本更新时就对变化的部分进行压缩，生成一个新的数字文件，每次都是增加一个增量包，这个包中包含的就是这次提交所有的commit的数据。
+[root@DNS ~]# svn checkout file:///var/repos/svn1/                  将代码下载到本地
+[root@DNS ~]# svn add 11111                         添加11111到版本库
+[root@DNS ~]# svn delete crc.c                      从版本库中删除crc.c文件
+[root@DNS ~]# svn status                            查看状态
+[root@DNS ~]# svn move 11111  xx.txt                将111111改名为xx.txt（其实就是删除11111，再创建xx.txt）
+==================================================================================================
+借助apache运行：
+注：实际的生产环境中更多是使用http结合svn的方式
+[root@DNS ~]# rpm -ql mod_dav_svn   查看模块安装后生成的文件
+/etc/httpd/conf.d/subversion.conf  配置文件
+/usr/lib64/httpd/modules/mod_authz_svn.so   认证模块
+/usr/lib64/httpd/modules/mod_dav_svn.so  连接httpd模块
+
+配置apache支持svn
+[root@DNS ~]# vim /etc/httpd/conf/httpd.conf
+#修改默认的httpd的用户和组都为svn
+ 250 User svn
+ 251 Group svn
+[root@DNS html]# vim /etc/httpd/conf.d/subversion.conf 
+配置svn结合apahce的配置文件
+<Location /svn>
+   DAV svn
+   SVNParentPath /var/repos
+      AuthType Basic    要求提供基本认证
+      AuthName "Authorization REPOS"    弹窗的信息
+      AuthUserFile /home/svn/passwd   用户的密码文件路径
+      AuthzSVNAccessFile /home/svn/authz   权限文件
+      Require valid-user    需要有效用户才能认证
+</Location>
+
+[root@DNS ~]# htpasswd -cm /home/svn/passwd tom  创建一个本地访问控制文件，后面通过http访问svn时，使用证号密码。账号密码就来自于这个文件
+[root@DNS ~]# vim /home/svn/authz   配置认证文件
+[/]        仓库根目录权限
+tom = rw
+[svn1:/]     针对svn1仓库的根目录
+@group = rw   针对group这个组
+jarry = rw
+[svn2:/]
+@admin = rw
+jarry = r
+[groups]
+group = tom,jarry
+admin = tom
+
+Windows客户端：
+软件：TortoiseSVN

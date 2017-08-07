@@ -1,0 +1,142 @@
+====================================================================================================================
+MariaDB服务器
+====================================================================================================================
+oracle     甲骨文（最有名，但不是使用的最多的）
+mysql      SUN(被oracle收购)（使用最多的）
+sqlserver  微软
+mariadb    rhel7（红帽收编的mysql的开发团队，跟mysql的使用一模一样）
+nosql      集群使用
+==========================================================================
+安装
+yum install mariadb\* -y
+systemctl restart mariadb.service
+systemctl enable mariadb.service
+firewall-cmd --add-service=mysql --permanent
+
+/etc/my.cnf    数据库的主配置文件
+
+mysql   进入数据库
+quit    退出数据库
+
+登录数据库，默认以root@localhost登录，不同于root，该身份只能本地登录
+MariaDB [(none)]> select user();
++----------------+
+| user()         |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+查看版本信息：
+MariaDB [(none)]> select version();
++----------------+
+| version()      |
++----------------+
+| 5.5.41-MariaDB |
++----------------+
+1 row in set (0.00 sec)
+
+show engines;                    显示支持的引擎：
+show databases;                  查看当前数据库中有哪些数据库：
+show create database rhel7;      查看创建的数据库的属性：
+show tables;                      查看数据库的表：
+desc a;                           查看表的类型：
+select * from a;                   查看表内的内容：
+select * from a\G ;                换一种显示查看表内的内容：
+select count(*) from aa;                   查看表的大小：
+select user,host,password from user;         按指定的column 查看表中的内容：
+select * from rhel7.aa;                    查看rhel7中的aa表：
+
+
+system clear                     在数据库中使用系统指令
+\! clear
+
+create database rhel7;           创建一个名为rhel7的数据库：
+create database rhel7 charset=gbk；指定编码创建数据库：
+create table a ( id int, name varchar(10), age int, email varchar(20));      创建一张表：
+
+drop database rhel7;             删除数据库：
+use rhel7;                       使用/进入数据库：
+rename table a to xx;              重命名表：
+insert into a  (id,name,age,email) values(1,'tom',24,'tom@qq.com');       向表a中插入内容：
+select * from a where name='tom';    搜索查询：
+alter database rhel7 charset=utf8；修改数据库的编码：
+
+alter table a drop age;              删除一列：
+alter table a add phone int;           添加一列：
+alter table a add phone int(11) after name;       指定列所在的位置和大小：
+select phone from bb where id=(select id from aa where name='bob');        通过表连接查询：
+
+通过多表查询：(但会产生笛卡尔积)
+select * from aa join bb;
+改进：
+select * from aa join bb where aa.id=bb.id;
+最终：
+select * from aa join bb using(id) where name=bob;
+
+update bb set sal=4800 where id=2;         更新表bb的sal列第2行的数据：
+
+
+delete from table-name where filed条件; 删除满足where条件的所在行
+============================================================
+行   row
+列   column
+==============================================================
+为数据库root账户设置密码：
+set password=password("redhat");
+
+重置密码：
+mysqladmin -uroot -p password
+
+通过密码登录：
+mysqladmin -uroot -hlocalhost -p
+
+更新密码：
+update user set password=password("centos")  where host='localhost' and user='root'; 
+
+刷新缓存让配置生效：
+flush privileges
+
+一、重置数据库密码
+update mysql.user set password=null;
+清空数据库中的所有密码：
+flush privileges
+
+二 、通过安全模式重置密码
+首先停止运行数据库
+systemctl stop mariadb
+vim /etc/my.conf
+skip-grant-tables
+让数据库进入安全模式
+update mysql.user set password=password('fuckjapan') where host='localhost' and user='root';  重置密码
+
+三、通过命令进入安全模式重置密码
+mysqld_safe --skip-grant-tables 
+==========================================================
+使用命令增加数据库密码安全
+mysql_secure_installation
+==========================================================
+设置数据库管理员
+create user tom@localhost          这种方式创建用户只能在本机登录
+create user tom                    这种方式创建用户可以在任何地点登录
+grant create on rhel7.aa to tom@'192.168.24.4' identified by 'tom';          给tom赋予添加aa表的权限
+grant create on rhel7.cc to tom@'192.168.24.4';                              给tom赋予删除cc表的权限
+revoke create on rhel7.cc from  tom@'192.168.24.4';                          从tom收回删除cc表的权限
+==========================================================
+数据库的备份和恢复
+备份：
+mysqldump           这个工具专门用来提供数据库的库和表的备份
+	-uroot  -p rhel7 aa      备份rhel7的aa表
+	> my.rhel7.aa.bak        重定向（备份后的数据使用二进制表示的日志文件，如果不重定向，只会在终端输出）
+
+恢复：
+恢复数据库内的表：
+在数据库内部操作：
+use a;
+source /root/rhel7.aa.bak 
+注：需要先进入指定的数据库。
+
+恢复数据库：
+在外部操作：
+mysql -uroot -p a < rhel7.aa.bak
+注：需若只是恢复摸个数据库中的一张表，则需要指定该数据库。

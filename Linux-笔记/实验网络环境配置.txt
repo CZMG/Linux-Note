@@ -1,9 +1,0 @@
-网络环境设置
-6
-/etc/inittab   末行将5改为3，关闭图形化
-
-/etc/udev/rules.d/70-persistent-net.rules   这个文件定义了网络设备的
-
-7
-systemctl set-default multi-user.target     设置默认模式为3，多用户模式
-

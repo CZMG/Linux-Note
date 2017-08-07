@@ -1,0 +1,183 @@
+﻿====================================================================================================================
+APACHE服务器
+====================================================================================================================
+apache，a patchy server ,一个打满补丁的服务器（首选web服务器）
+tomcat，java,JS   审计
+nginx，前段负载均衡
+IIS
+
+web，网站服务器，C/S架构
+HTTP协议，端口80，daemons :httpd
+==============================================================
+安装apache
+yum install httpd\* -y 
+httpd	服务器端
+	devel   开发
+	manual  手册
+	tools   工具
+	
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+service iptables sava
+
+/etc/httpd/conf/httpd.conf    apache的主配置文件
+
+/var/www/html    网站的主目录，里面存放网站的所有内容文件和数据。
+
+如果网站主页名称不是index.html ，那么访问时需要在域名后加上主页名称方可访问。
+===============================================================
+虚拟目录
+将其他位置的文件夹下的index.html在/var/www/html下建立软链接。（需要关闭selinux）
+===============================================================
+访问控制
+Order deny,allow         写在后面的优先执行
+allow from all            允许所有
+deny IP                  阻止某IP
+
+基于htaccess的验证
+vim .htaccess
+AuthName xxxxxxxxxx
+AuthType Basic
+AuthUserFile /var/www/html/.htpasswd
+Require user tom
+               
+[root@DNS html]# htpasswd -c -m .htpasswd tom 创建一个密码文件
+然后修改主配置文件，对目录权限重新定义
+<Directory "/var/www/html/xx">
+    Options FollowSymLinks
+    AllowOverride Authconfig    主要修改这里
+    Order deny,allow
+    allow from all
+</Directory>
+============================================================
+apache的个人主页及别名
+个人主页：
+注销 UserDir disabled
+启用 UserDir public_html
+
+在用户家目录下建立目录public_html,写入主页，即可访问。
+重启服务
+
+若selinux阻止，修改上下文：chcon --reference /var/www/html/index.html /home/tom/public_html/index.html
+修改bool值：setsebool http_enable_homedir on
+
+排错：防火墙，selinux,目录权限。
+
+别名：
+Alias /a/ "/var/www/a/"
+在浏览器中输入 http://www.apache.com/a/index.html
+============================================================
+虚拟主机
+基于主机名的虚拟主机:
+	用户通过不同的域名访问不同的网站，用户访问的不同的网站其实存在于同一台主机。这些不同的站点在同一台服务器上，我们就叫虚拟主机。
+	1、配置好DNS服务器，使多个域名能解析到同个ip地址上
+	2、编辑/etc/httpd/conf/httpd.conf
+	NameVirtualHost 192.168.0.1：80    #启用基于域名的虚拟主机 
+	<VirtualHost 192.168.0.1:80> 
+		ServerAdmin root@linuxidc.com 
+		DocumentRoot /www/html/www1.linuxidc.com 
+		ServerName www1.linuxidc.com 
+		ErrorLog logs/www1.linuxidc.com-error_log 
+		CustomLog logs/www1.linuxidc.com-access_log common 
+	</VirtualHost> 
+	<VirtualHost 192.168.0.1:80> 
+		ServerAdmin root@linuxidc.com 
+		DocumentRoot /www/html/www2.linuxidc.com 
+		ServerName www2.linuxidc.com 
+		ErrorLog logs/www2.linuxidc.com-error_log 
+		CustomLog logs/www2.linuxidc.com-access_log common 
+	</VirtualHost>
+注：httpd-vhosts.conf    应放在conf.d/而不是conf/下。
+
+基于IP地址的虚拟主机:
+	在同一台服务器上提供多个ip地址访问不同的域名
+[root@DNS ~]# ip addr add 192.168.24.5/24 dev eth0 label eth0:1
+[root@DNS ~]# ip addr add 192.168.24.6/24 dev eth0 label eth0:2
+在一块网卡上设置多个ip
+<VirtualHost 192.168.0.1:80> 
+    ServerAdmin root@linuxidc.com 
+    DocumentRoot /www/html/www1.linuxidc.com 
+    ServerName www1.linuxidc.com 
+    ErrorLog logs/www1.linuxidc.com-error_log 
+    CustomLog logs/www1.linuxidc.com-access_log common 
+</VirtualHost> 
+<VirtualHost 192.168.0.2:80> 
+    ServerAdmin root@linuxidc.com 
+    DocumentRoot /www/html/www2.linuxidc.com 
+    ServerName www2.linuxidc.com 
+    ErrorLog logs/www2.linuxidc.com-error_log 
+    CustomLog logs/www2.linuxidc.com-access_log common 
+</VirtualHost>
+排错：配置虚拟主机时需将DocumentRoot “/var/www/html” 注释掉
+
+基于端口的虚拟主机:    
+<VirtualHost 192.168.0.1:80> 
+    ServerAdmin root@linuxidc.com 
+    DocumentRoot /www/html/www1.linuxidc.com 
+    ServerName www1.linuxidc.com 
+    ErrorLog logs/www1.linuxidc.com-error_log 
+    CustomLog logs/www1.linuxidc.com-access_log common 
+</VirtualHost> 
+<VirtualHost 192.168.0.1:8080> 
+    ServerAdmin root@linuxidc.com 
+    DocumentRoot /www/html/www2.linuxidc.com 
+    ServerName www2.linuxidc.com 
+    ErrorLog logs/www2.linuxidc.com-error_log 
+    CustomLog logs/www2.linuxidc.com-access_log common 
+</VirtualHost>
+
+elinks www.example.com --dump  
+出现问题：查防火墙，selinux()，semanage
+
+修改端口的安全上下文
+yum install semanage
+semanage port -l | grep 80
+semanage port --del -t http_port_t -p tcp 8080
+semanage port --add -t http_port_t -p tcp 8090
+==========================================================
+web 的TLS
+SSL secure socket layer
+	网景
+	http 纯明文传输
+TLS transport layer security
+	标准，传输层套接安全，是一个国际标准，几乎所有涉及到金融的网站都会使用https，目前更多其他领域的网站也在加入https行列。
+	HTTPS(hyper text transport security over secure socket layer)，使用RSA AES MD5 SHA ，还包括证书。证书本身就是一对秘钥（非对称算法，RSA和ECC）
+	HTTPS传输原理：
+		1、客户端---服务器端：向服务器端发送请求（web服务器），请求中包含自身能够使用的加密算法或者压缩算法等
+		2、服务器端---客户端：如果服务器在收到的客户端的工具集中发现有自己无法使用的算法，那么拒绝链接；反之，服务器端向对方发送自己可以使用的算法，并把这些信息放在证书中发送给客户端（证书注册的时间、注册的机构、有效期、失效期、网址等信息）。
+		3、客户端---服务器端：客户端收到这些信息后，首先判断证书的合法性。如果证书没有被授予信任，用户可以自己决定是否访问。如果证书合法，这时客户端会生成一个随机数，用服务器证书中的公钥加密，这步是为了防止数据传输中被窃听。用前两次交流中确定的哈希算法对消息做数字签名，一起发送个服务器端。
+		4、服务器端---客户端：服务器端对收到的消息用私钥解密，获取随机数（密码），然后通过哈希比对，判断消息的一致性。
+		5、后面的链接，客户端用随机数，使用对称算法加密和服务器端进行数据传输。如果中间连接断开，则重复上面的步骤。此过程中，两边协商的对称加密的密码，都只有双方知道，不存在中间人攻击等可能。
+		
+问题：为什么要认证证书？
+整个传输过程中的加密算法和实现方式都是透明的，不存在任何秘密，也就意味着理论上任何人可以生成证书。
+有专门可信赖的第三方的证书认证机构，最顶层的叫root ca.
+
+实施：
+yum install mod_ssl 安装apache的ssl模块
+vim /etc/httpd/conf.d/ssl.conf     配置ssl模块
+生成证书
+cd /etc/pki/tls/certs/
+make /etc/httpd/conf/test.crt
+
+
+针对特殊站点的认证:
+70    SSLEngine on          这是ssl的引擎，默认是on，表示全局启用ssl。如果只是希望对某一个站点进行tls传输，必须设置为off。
+
+在vhosts.conf的某个站点配置下加入
+SSLEngine on
+SSLCertificateFile /etc/httpd/conf/test.crt
+SSLCertificateKeyFile /etc/httpd/conf/test.key
+
+
+配置参考配置文件
+===============================================================================
+服务器日志监测
+用epel源安装 webalizer
+/etc/httpd/conf.d/webalizer.conf
+webalizer          启动（只有启动了才能访问）
+
+================================================================================
+压力测试
+安装 ab
+ab -n 5000  www.test.com/index.html 让5000人访问
+	-c  100   让100人同时访问

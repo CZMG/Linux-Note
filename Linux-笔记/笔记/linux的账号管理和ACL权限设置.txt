@@ -1,0 +1,152 @@
+﻿系统用户
+/etc/passwd
+系统使用uid来表示用户名
+使用git表示组名
+uid=0是root
+uid从1到499都是系统用户，PAM模块会过滤500内的
+用户名：密码：uid：gid：注释：家目录：shell环境
+root:x:0:0:root:/root:/bin/bash
+===========================================
+密码文件
+/etc/shadow
+用户名：密码（sha-512+salt）:unix的纪元时（1970-1-1）：最少使用天数：最长使用天数：密码到期前的警告天数：最长不活跃时间（过期账号禁用）：失效时间
+root:$6$OmUfdlho2jMGPGrW$bAJiYSNmKNlzMCyUc7YAONlKtiX7.24uk.WAcosWQuAZY0cCmcmUDahTAZTslHDRXWpxEqqwSjBNSeslMNRAA0:17216:0:99999:7:::
+==========================================
+groups u1    查看u1所属组
+gpasswd -a u1 root    将u1用户加入root组
+			-d   u1 root    从root组删除u1
+id u1        查看u1用户的信息
+useradd -G u2 root   创建一个u2用户，并加入root组
+newgrp root    将当前用户在本shell内加入root组，退出则失效
+passwd  -S u1   查看u1的密码信息
+	-d u1   清空u1用户的密码
+	-u  u1       解锁u1用户账户
+	-U u1       锁定u1用户账户
+userdel jack     删除jack用户（但用户的信息不回删除）
+	-r    jack      彻底删除jack用户
+	
+
+/etc/default/useradd
+useradd -c "i am u1"    添加注释
+	-s  /bin/bash   指定登录环境
+	-d  /home/u2    指定家目录
+	-g  u2          指定组
+	-G  root        指定附属组
+	-u  1000        指定uid
+
+chage option username   修改某个用户的账户信息
+
+finger jack        查看某个用户的详细信息
+
+groupadd   xx
+groupdel   xx
+
+批量创建用户的方法：
+1、for循环添加：
+	例：[root@1 ~]# for i in `seq  1 10`
+			> do
+			> useradd user$i
+			> echo "redhat" | passwd --stdin user$i
+			> done
+（删除）userdel -r  user$i
+2、编写 /etc/passwd 
+添加用户：
+vim 1.txt
+  1 t1:x:502:502::/home/t1:/bin/bash
+  2 t2:x:503:503::/home/t2:/sbin/nologin
+  3 t3:x:504:504::/home/t3:/bin/bash
+newusers < 1.txt
+
+添加密码：
+pwconv
+pwunconv     取消shadow加密
+chpasswd < *.txt
+
+这种操作后用户不存在家目录，从/etc/skel中拷贝所有环境文件到每个用户的家目录。
+
+密码规则：
+root 
+禁止远程登录
+修改uid为1-499
+
+/etc/login.defs 
+/etc/pam.d/system-auth
+这两个文件可以设置用户登录的密码规则
+
+ 16 password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5
+ remember=5,设置5次之内设置的密码不能重复
+ 
+ 创建密码的规则
+ centos 7
+ vim 
+ /etc/security/pwquality.conf
+ minlen=8   最小长度
+ minclass=1  最小类别，表示密码中最小的字符类别是几个，比如大写字母算一个，小写字母算一个，特殊字符算一个。
+ maxrepeat=2
+ 密码中不允许出现连续的字符类别
+ lcredit=0      在新密码设置中最小包含几个小写字母
+ ucredit=0      在新密码设置中最小包含几个大写字母
+ dcredit=0      在新密码设置中最小包含几个数字
+ oocredit=0      在新密码设置中最小包含几个特殊字符
+ maxsequence=3   在新密码设置中不允许连续出现连续出现同类字符3个以上
+ difox=5        在新密码设置中不允许个上一个密码的相似度相同字符达到5个
+ gecoscheck=3     在新密码中密码的相同字符不能超过gecos信息的3个
+ 
+ chmod 700 /usr/bin/su     禁止其他用户使用su
+ ============================================
+ FACL（排在默认权限之前）
+getfacl xx                          查看xx文件的权限（看到#effictive:---，facl未生效，重新再设置一次facl）
+setfacl -m u:bob:r-- xx       设置bob对xx文件拥有r权限
+	-x 	u:bob xx				删除权限(不需要写具体权限)
+setfacl -m u:jarry:rw-  rhce/    对目录rhce设置权限，只针对目录下jarry的文件生效。
+setfacl -m d:jarr :rw- rhce/      不论是谁在rhce下创建的文件，jarry都对其拥有rw权限。
+	-x d:                           删除
+	-k  rhce/                    删除rhce的默认权限
+=========================================
+su   root    当前目录切换
+su  -  （root）   切换到root家目录
+	-c  `mount /dev/cdrom /mnt`
+=========================================
+sudo 
+/etc/sudoers或者visudo
+root          ALL=(ALL)               ALL
+用户      主机名=（身份）      命令
+
+sudo -k   清空
+	-l        查看当前用户可以使用的指令
+=========================================
+PAM  插入式验证模块（已被SUN收购）
+提供了一个API，用于系统的安全认证。
+PAM模块所在位置：/lib64/security
+/usr/share/doc/pam-1.1.1/txts
+这个目录下存放了所有模块的说明文档
+pam_access.so  比如这个模块就是控制用户登录的
+
+vim /etc/pam.d/sshd
+查看这个pam插件的具体个格式
+				模块类型				控制标记			调用的模块
+
+模块类型：
+认证模块(auth)：认证用户管理的
+账户管理(account)：认证账户执行与访问的控制权限
+密码管理(password)：设置密码、密码强度、更新密码
+会话管理(sessions)：管理链接和断开
+
+控制标记：
+required
+当带有这个标记的模块只有全部通过验证才表示鉴定完毕。如果有不符合的，模块也不会返回信息。
+include   同时调用其他模块或脚本
+sufficient    模块一旦调试成功，PAM立即返回成功标志，不再继续。（成功即终止）
+optional,不论成功失败，都继续。
+requisite     失败即终止，其他和required一样
+
+/etc/pam.d       目录下存放了模块的所有环境文件
+
+ =========================================
+ 查看当前登录系统的用户：	w,  who
+ 查看近期登录系统的用户：last
+ 给其他用户发信息：write hf tty2 ,回车输入内容
+普通用户拒绝接受聊天信息：mesg -n (对root发的信息无效)
+	开启信息：mesg -y   
+root给在线所有用户广播：wall "this mechine will shutdown"
+给hf发邮件：echo  "今晚一起吃饭" | mail -s "吃饭" hf   (-s   ＋邮件主题)

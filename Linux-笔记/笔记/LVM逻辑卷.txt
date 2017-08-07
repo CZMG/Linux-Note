@@ -1,0 +1,53 @@
+逻辑卷只属于类unix系统。
+pv : 物理卷
+vg : 卷组
+PE : 卷组的大小是由PE构成的。PE也是vg的最小单位。默认大小是4M。
+lv : 逻辑卷
+==============================================
+pvscan    查看当前是否有物理卷存在
+pvcreate /dev/md0p{1,2,3,4} 使用阵列中的分区来创建pv，模拟真实环境用磁盘做
+vgscan    查看当前是否有卷组存在
+vgcreate  vg0 /dev/md0p{1,2,3}  创建vg
+	-s 8   指定PE的大小来划分，8为8M/PE
+pvdisplay  查看物理卷的详细信息
+vgdisplay  查看卷组的详细信息
+lvscan     查看当前逻辑卷的信息
+lvcreate -n lv0 -L 1000M vg0   从vg0中创建名为lv0的大小为1000M的逻辑卷
+	-l 100  指定lv0添加的PE的数量，此大小为100*4M
+lvdisplay  查看逻辑卷的详细信息
+
+逻辑卷创建好后再进行分区。
+mkfs.ext4 /dev/vg0/lv0
+mount /dev/vg0/lv0 /tmp/test/
+
+
+lvextend -l +115 /dev/vg0/lv0  扩展逻辑卷lv0的大小，数量为添加115个PE。（注：需要加上"+"）
+resize2fs /dev/vg0/lv0    激活扩展的逻辑卷
+
+vgextend vg0 /dev/md0p4  扩展卷组的大小，前提是有足够的物理卷。
+
+逻辑卷的缩小非常有讲究，必须严格按照下面的步骤操作（实际工作中不建议缩小，容易造成数据丢失）
+umount /dev/vg0/lv0           卸载
+e2fsck -f /dev/vg0/lv0        执行磁盘校验
+resize2fs /dev/vg0/lv0 1950M  指定调整后的大小
+lvreduce -l -265 /dev/vg0/lv0  缩小lv0的大小
+=============================================
+逻辑卷快照
+
+lvcreate -n sn -L 400M -s /dev/vg0/lv0   创建快照，快照是挂载使用的
+	-n  快照名sn
+	-L  指定大小（建议为逻辑卷的1/4）
+	-s  指定快照的对象
+
+lvremove -f /dev/vg0/sn  删除快照
+
+
+自动创建快照的脚本
+#!/bin/bash
+umount /root/test
+lvcreate -n sn -L 300M -s /dev/vg0/lv0 &> /dev/null
+
+lvremove -f /dev/vg0/sn
+===========================
+图形化管理工具
+yum install system-config-lvm (RHEL7默认取消了这个软件)
