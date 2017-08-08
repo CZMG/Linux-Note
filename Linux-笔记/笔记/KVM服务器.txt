@@ -1,0 +1,99 @@
+===================================================================================================
+KVM虚拟化
+===================================================================================================
+服务器的虚拟化技术
+服务器虚拟化
+桌面虚拟化  cirtix（思杰）  vmware 
+应用虚拟化  vmware
+存储虚拟化  vsan   vmware
+网络虚拟化  SDN
+数据中心虚拟化  
+
+常用的虚拟化软件：
+vmware workstations
+xen
+virtual box
+vpc
+kvm
+
+全虚拟化
+半虚拟化   ring3  ring0     xen  
+基于硬件的全虚拟化         kvm
+
+随着计算机性能的大幅度提升，实际的应用中cpu的利用率使用并不高，对于企业而言，这就是资源的浪费。服务器的虚拟化是目前企业或者其他机构中一定会考虑的实施部署方案。
+
+服务器虚拟化中一般都会结合一系列的管理功能，比如HA（高可用）、LB（负载均衡）、DRS
+使用率比较高的服务器虚拟化方案有：
+vmware vsphere   （vmware）  商用版本  部署简单 功能齐全  无定制性。VCP认证。
+rhev  （红帽）  kvm    开源的方案
+hyper-v （微软）
+cirtix   （思杰）  xen
+===================================================================================================
+kvm  kernel-base virtual machine（基于内核的虚拟机）
+
+cpu的指令有4个级别：ring0 ring1 ring2 ring3
+
+ring0的级别最高，通常都是执行内核空间指令。ring3的级别最低，通常都是执行用户空间的指令。ring0指令通常都是控制中断、修改页表、访问硬件设备等，叫特权指令。应用程序所使用的指令都是由ring3来执行了。如果某个程序需要将数据存储到磁盘中，这时指令会从ring3到ring0进行转换和变化。
+
+用户空间的指令不能执行内核空间的指令，也就代表着如果vmware workstations中的虚拟机要发出一个关机的指令，意味着要中断系统硬件的运行，这个是特权指令。为了解决这个问题，vmware在1998年开发了一个技术叫BT（二进制特权转换）。
+
+通过BT实现的虚拟化我们叫半虚拟化，如果要实现半虚拟化，就需要修改系统的内核来实现指令翻译。对此，windows是不可能实现的，也就是说半虚拟化只针对开源的操作系统。
+半虚拟化软件：xen  在2012年左右已经开源，现在应该属于cirtix公司。
+性能非常好，接近裸机，但是只能用于linux系统
+
+intel公司推出了cpu的虚拟化，直接通过硬件实现了虚拟化功能。基于硬件的全虚拟化开始流行，性能是最好的。
+
+目前  腾讯做的是kvm
+      淘宝也在部署kvm
+	  百度云部署xen
+	  淘宝也有许多xen
+===================================================================================================
+kvm需要搭载qemu来实现管理，现在也有使用libvirt（virsh）来实现
+[root@DNS ~]# yum groupinstall "虚拟化*" -y
+[root@DNS ~]# service libvirtd restart 启动kvm的管理daemons
+[root@DNS ~]# virt-manager           启动kvm管理器
+
+如果添加虚拟机出现字符问题，执行下面的命令,以英文启动
+[root@DNS ~]# LANG=c virt-manager   
+
+安装虚拟机
+硬盘和网卡模式建议选择:virtio
+VNC，提供图形化的，远程桌面
+
+KVM命令行简单操作：
+[root@DNS ~]# virsh 
+virsh: list --all
+virsh: domiflist CentOS6(domain name)   通过域名查看网卡信息
+virsh: attach-interface CentOS6 --type bridge --source  br0 添加网卡
+virsh: start CentOS6                    指定域名开启虚拟机
+virsh: attach-disk --..                 添加磁盘
+
+kvm快照：（只能通过命令行管理，图形化没有）
+virsh # snapshot-create CentOS6
+kvm的快照不支持默认的磁盘格式RAW。
+[root@DNS ~]# qemu-img info /var/lib/libvirt/images/CentOS6.img    查看CentOS6的磁盘类型
+
+虚拟机支持的磁盘格式有vmdk（vmware）、vdi（virtualbox）、RAW（kvm）、cow和qcow2（可以快照）
+qcow2格式性能不如raw，但是功能比较多，支持压缩、快照、加密等等。想要让虚拟机磁盘支持快照，磁盘必须为qcow2格式。
+
+[root@DNS ~]# qemu-img convert -f raw -O qcow2 /var/lib/libvirt/images/CentOS6.img /var/lib/libvirt/images/CentOS6.qcow2                    将当前磁盘类型转换为qcow2类型
+
+建议：在虚拟化前就创建虚拟磁盘
+[root@mail ~]# qemu-img create -f qcow2 c6.qcow2 8G
+
+通过命令行安装
+virt-install -n centos6 -r 512 -f /var/lib/libvirt/images/CentOS6.img -b br0 -l /dev/cdrom -x "console=tty0 console=ttyS0 115200ng" --nographics 
+===================================================================================================
+docker(容器)
+lxc  namespace cgroup  chroot  
+用户空间     进程隔离
+资源组管理   资源隔离
+chroot       用户隔离
+注：docker实现的隔离还是有限的，从实际情况上来看，肯定么有虚拟化来的彻底
+在同一台服务器上的所有的容器共用底层的内核（linux）
+
+和虚拟机相比：启动毫秒级别，安全性上不如虚拟机。
+
+[root@mail ~]# yum install docker-io -y
+docker仓库
+docker镜像
