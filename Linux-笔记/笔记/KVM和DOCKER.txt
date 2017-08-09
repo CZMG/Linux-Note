@@ -48,6 +48,17 @@ intel公司推出了cpu的虚拟化，直接通过硬件实现了虚拟化功能。基于硬件的全虚拟化开始
 	  百度云部署xen
 	  淘宝也有许多xen
 ===================================================================================================
+桥接网卡的创建
+cp ifc-eno33554984 ifc-br0
+vim ifc-br0 
+	TYPE=BRIDGE
+	NAME=br0 
+	DEVICE=br0 
+vim ifc-eno33554984
+	BRIDGE=br0 
+	BOOTHPROTO=none
+创建完成，br0和eno33554984的MAC地址应该一样
+===================================================================================================
 kvm需要搭载qemu来实现管理，现在也有使用libvirt（virsh）来实现
 [root@DNS ~]# yum groupinstall "虚拟化*" -y
 [root@DNS ~]# service libvirtd restart 启动kvm的管理daemons
@@ -82,18 +93,34 @@ qcow2格式性能不如raw，但是功能比较多，支持压缩、快照、加密等等。想要让虚拟机磁盘
 [root@mail ~]# qemu-img create -f qcow2 c6.qcow2 8G
 
 通过命令行安装
-virt-install -n centos6 -r 512 -f /var/lib/libvirt/images/CentOS6.img -b br0 -l /dev/cdrom -x "console=tty0 console=ttyS0 115200ng" --nographics 
+virt-install -n centos6 -r 512 -f /var/lib/libvirt/images/CentOS6.img -b br0 -l /dev/cdrom -x "console=tty0 console=ttyS0 115200ng" --nographics     虚拟机名称CentOS6；内存512M；磁盘位置/var/lib/libvirt/images/CentOS6.img，也可以加上-s 8，指定使用该文件的8G作为磁盘；指定网卡未br0；从/dev/cdrom获取安装介质；-x表示通过何种方式登录。具体可以通过man virsh查看。
 ===================================================================================================
 docker(容器)
+===================================================================================================
 lxc  namespace cgroup  chroot  
 用户空间     进程隔离
 资源组管理   资源隔离
 chroot       用户隔离
-注：docker实现的隔离还是有限的，从实际情况上来看，肯定么有虚拟化来的彻底
+注：docker实现的隔离还是有限的，从实际情况上来看，肯定没有虚拟化来的彻底
 在同一台服务器上的所有的容器共用底层的内核（linux）
 
 和虚拟机相比：启动毫秒级别，安全性上不如虚拟机。
 
+运维--docker(环境) ---直接交给开发（）
+
 [root@mail ~]# yum install docker-io -y
-docker仓库
+[root@mail ~]#systemctl restart docker
+[root@mail ~]#docker version   查看docker版本
+
+docker仓库（dockerhub上提供）
 docker镜像
+
+docker一般操作命令：
+docker search arch     到官方仓库里查找个arch相关的包
+docker pull cirros(name)    下载需要的包
+docker images               查看镜像的信息
+docker ps -a                查看当前有哪些容器
+docker run -t -i docker.on/cirros /bin/sh       运行某个容器（-i表示启用交互）
+docker rm 4bf               删除4bf开头的容器
+
+注：docker安装好后会自动安装桥接网卡
