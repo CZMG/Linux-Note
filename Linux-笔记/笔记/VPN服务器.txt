@@ -57,11 +57,12 @@ openvpn是一个基于openssl库来实现的vpn开源工具。和pptp等vpn相比，它的特点安全。它
 [root@RB ~]# yum install openssl openssl-devel -y
 openssl是用来实现openvpn加密的，需要安装。
 heartbleed漏洞，检查一下openssl是否有这个漏洞
-[root@RB ~]# openssl version  检查版本
+[root@RB ~]# openssl version  检查版本（heartbeat心脏滴血漏洞）
 [root@RB ~]# yum install lzo
 lzo工具用来实现快速的压缩和解压缩，它提供的是一种加速的无损解压缩算法，可以在openvpn数据传输过程中提升性能
+下载epel源
 [root@RB ~]# yum install openvpn easy-rsa
-通过安装epel源安装openvpn和easy-rsa（提供rsa的算法）
+通过安装epel源安装openvpn和easy-rsa（提供rsa的算法）（拓展：OpenGPG）
 
 1、生成openvpn的证书密钥
 [root@RB ~]# vim /usr/share/easy-rsa/2.0/vars 
@@ -82,3 +83,6 @@ lzo工具用来实现快速的压缩和解压缩，它提供的是一种加速的无损解压缩算法，可以在ope
 [root@RB 2.0]# iptables -I FORWARD  -p all --dest 192.168.24.0/24 -j ACCEPT
 
 [root@RB 2.0]# iptables -I INPUT   -p tcp --dport 1194 -j ACCEPT
+
+启动服务失败：
+If you’re having problems getting OpenVPN to start, commenting out the LimitNPROC in /lib/systemd/system/openvpn@.service, as discovered in this Ask Ubuntu thread may be useful. You’ll then need to run sudo systemctl daemon-reload and then sudo systemctl start openvpn@server.
