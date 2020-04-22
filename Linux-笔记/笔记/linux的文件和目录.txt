@@ -155,7 +155,7 @@ find  目录  -name   文件名    查找该目录下某个文件
         !         反向选择
          
 根据时间戳查找：
-访问时间（atime）(amin)
+访问时间（atime，单位：天）(amin，单位：分钟)
 修改时间（ctime）(cmin)
 变化时间（mtime）(mmin)
 例：[root@1 ~]# find / -type f -atime +2
