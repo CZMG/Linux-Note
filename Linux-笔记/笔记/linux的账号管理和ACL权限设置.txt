@@ -37,6 +37,7 @@ useradd -c "i am u1"    添加注释
 chage option username   修改某个用户的账户信息
 
 finger jack        查看某个用户的详细信息
+chfn               修改finger的信息
 
 groupadd   xx
 groupdel   xx
@@ -75,6 +76,8 @@ root
 
  16 password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5
  remember=5,设置5次之内设置的密码不能重复
+ 
+ authconfig
  
  创建密码的规则
  centos 7
