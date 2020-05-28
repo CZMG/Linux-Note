@@ -79,6 +79,7 @@ rsync  参数：
 	-r  递归
 	-b  备份
 例子：rsync -azP root@192.168.24.240:/tmp/xx /tmp/yy   从服务器端拉取
+      rsync -azP -e 'ssh -p 40022' $SRC user@host:$DST   指定使用ssh和端口号进行传输
 
 inotify 是内核2.6以后自带的一个机制，提供了对文件的事件的监控，比如文件的修改，删除，添加，属性的调整。
 /proc/sys/fs/inotify/max_
