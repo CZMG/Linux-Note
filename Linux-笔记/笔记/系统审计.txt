@@ -1,0 +1,57 @@
+系统审计
+daemon: auditd
+内容：日志文件--特定时间点、自定义敏感标签、用户ID等、文档、系统调用、数据库的改变
+
+系统审计包含两部分内容：用户空间
+
+工具和文件：
+auditd:守护进程，用来捕获事件。
+auditctl:配置客户端，通过这个工具可以实现对审计规则的查询。
+audit.rules:记录相应的审计规则。
+auditd.conf:用来配置守护进程的工作。
+aureport:读取审计报告。
+ausearch:检索审计的具体内容。
+audit.log:审计的日志。
+autrace:审计框架中实现审计追踪的。
+auvirt:虚拟机审计。
+ausyscall:系统调用的工具。
+
+安装：（rhel系列都默认安装）
+	yum install audit
+
+配置文件：
+	/etc/audit/auditd.conf  --正常情况下这里的配置不需要修改，但是某些企业（制造业）需要完成IOS270001标准时，另外还有CAPP（可控制存取保护档案标准），需要修改。
+		log_format:有两种选项-NOLOG（通常不使用）和RAW。
+		log_file:如果要符合标准，这个文件的权限和路径非常重要。
+		flush:表示多久向日志写入，有四种选项-SYNC、INCREMENTAL_ASYNC、NONE、DATA（类似SYNC）。
+		freq:默认值50，表示记录50条，写入日志。
+	/etc/audit/audit.rules  --规则配置文件，自动生成。
+
+
+审计的规则类型：
+1、控制规则：    系统的行为（登录等）
+2、文件系统规则：文件的修改
+3、系统调用规则：程序、服务的调用（性能开销大）
+
+规则的写入：
+auditctl 
+	-l 查看规则
+	-w path 插入规则
+	-p 审计权限
+例：
+	1、auditctl -w /etc/passwd -p wa -k changepasswd     创建一条规则，用于审计对/etc/passwd文件及其权限的修改，并创建一个叫changepasswd标签。
+	ausearch -k changepasswd    搜索审计记录，指定查看changepasswd的审计记录。
+	2、ausearch -m USER_LOGIN -sv no   搜索审计记录，查看登录失败的审计记录。
+
+系统调用：
+auditctl -a action,filter -S systemcall -F value -k customlabel
+	action: always(在审计时会分配上下文), never(不生成审计记录)
+	filter: task,exit,user(uid,gid),exclude(过滤不希望看到的类型)
+	value：标明系统架构，x86_64
+例：
+	1、auditctl -a always,exit -F arch=x86_64 -F uid=1000 -S open -k testcustom   在当前的架构中，对uid为1000的用户在执行syscall时，只要符合open动作的就审计下来，用testcustom标签记录。
+
+
+工具：
+elastic
+audisp-plugin   客户端插件，远程日志服务器用
