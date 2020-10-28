@@ -4,8 +4,7 @@
 # @Last Modified by:   10076
 # @Last Modified time: last_modified_time
 
-apt update && apt upgrade -y
-apt install zsh
+yum install zsh
 
 # dvwa
 wget https://github.com/ethicalhack3r/DVWA/archive/master.zip
