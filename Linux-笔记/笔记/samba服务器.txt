@@ -1,111 +1,111 @@
 =================================================================================================================================
-SAMBA·şÎñÆ÷
+SAMBAæœåŠ¡å™¨
 =================================================================================================================================
-samba±»³ÆÎªÒ»¸öÎ°´óµÄ´´Ôì¡£ËüÄÜ¹»ÊµÏÖÔÚÀàunxiºÍwinÖ®¼äµÄ¹²Ïí£¬ÃÖ²¹ÁËnfsµÄ²»×ã¡£sambaÖ§³Ö½¨Á¢ÓòÒÔ¼°¼ÓÈëÓò£¬¿ÉÒÔÄ£Äâ³ÆÎªadÓòÖĞµÄDC¡£
+sambaè¢«ç§°ä¸ºä¸€ä¸ªä¼Ÿå¤§çš„åˆ›é€ ã€‚å®ƒèƒ½å¤Ÿå®ç°åœ¨ç±»unxiå’Œwinä¹‹é—´çš„å…±äº«ï¼Œå¼¥è¡¥äº†nfsçš„ä¸è¶³ã€‚sambaæ”¯æŒå»ºç«‹åŸŸä»¥åŠåŠ å…¥åŸŸï¼Œå¯ä»¥æ¨¡æ‹Ÿç§°ä¸ºadåŸŸä¸­çš„DCã€‚
 
-samba·şÎñÆ÷µÄdaemonsÓÉnmbdºÍsmbdÀ´Ìá¹©¡£ÆäÖĞnmbdÊÇÎª±È½Ï¹ÅÀÏµÄĞ­ÒéÌá¹©·şÎñÖ§³ÖµÄ£¬ÏÖÔÚÒÑ¾­ºÜÉÙÊ¹ÓÃ¡£
+sambaæœåŠ¡å™¨çš„daemonsç”±nmbdå’Œsmbdæ¥æä¾›ã€‚å…¶ä¸­nmbdæ˜¯ä¸ºæ¯”è¾ƒå¤è€çš„åè®®æä¾›æœåŠ¡æ”¯æŒçš„ï¼Œç°åœ¨å·²ç»å¾ˆå°‘ä½¿ç”¨ã€‚
 
-samba ¶Ë¿Ú£º udp 137 138 , tcp 139 445 
-°²×°samba
+samba ç«¯å£ï¼š udp 137 138 , tcp 139 445 
+å®‰è£…samba
 yum install samba
 =============================================
-Ö÷ÅäÖÃÎÄ¼ş
+ä¸»é…ç½®æ–‡ä»¶
 /etc/samba/smb.conf
 
-ÍøÂçÅäÖÃ£º
-workgroup  ¹¤×÷×é
-server string  samba·şÎñÆ÷µÄ°æ±¾ºÅ
-betbios name   ¸úwindowsÏà¹ØµÄÅäÖÃ
-interfaces   ¼àÌıµÄ¶Ë¿Ú¡¢Íø¿¨¡¢IPµÈ
-hosts allow  ÔÊĞí·ÃÎÊsamba·şÎñÆ÷µÄµØÖ·
+ç½‘ç»œé…ç½®ï¼š
+workgroup  å·¥ä½œç»„
+server string  sambaæœåŠ¡å™¨çš„ç‰ˆæœ¬å·
+betbios name   è·Ÿwindowsç›¸å…³çš„é…ç½®
+interfaces   ç›‘å¬çš„ç«¯å£ã€ç½‘å¡ã€IPç­‰
+hosts allow  å…è®¸è®¿é—®sambaæœåŠ¡å™¨çš„åœ°å€
 
-°²È«ÅäÖÃ£º
+å®‰å…¨é…ç½®ï¼š
 security = user 
-	ÑéÖ¤·½Ê½£º
-		1¡¢share£ºÄäÃû·ÃÎÊ£¬°²È«ĞÔ²»¸ß(×¢Òâ£ºsecurity=share,Æô¶¯·şÎñÊ±»áÊ§°Ü£¬ÕâÖÖ·½Ê½Ö»ÄÜÔÚsamba4.0°æ±¾ÒÔÇ°Ê¹ÓÃ¡£ÔÚ4.0°æ±¾ÖĞÔö¼ÓÁË°²È«ÊôĞÔ£¬²»Ö§³ÖÄäÃûµÇÂ¼¡£²»ĞíÍ¨¹ımap to guestÀ´ÊµÏÖ¡£security = user ,map to guest = Bad User)
-		2¡¢user:  ÓÃ»§±ØĞëÌá¹©ÕËºÅºÍÃÜÂëµÇÂ½£¬±¾µØĞèÒªÌá¹©ÕËºÅÃÜÂëµÄÊı¾İ¿â
-		3¡¢server: Í¨¹ıldapµÈ·şÎñÆ÷µÄÈÏÖ¤
-passdb backend = tdbsam  ÓÃ»§ºóÌ¨µÄÊı¾İ¿â¡£Í¨³£ÓĞtdbsam£¨ÔÚ/etc/sambaÄ¿Â¼ÏÂÓĞÊı¾İÎÄ¼şpasswd.db£©¡¢smbpasswd(ÔÚ/etc/sambaÄ¿Â¼ÏÂÓĞÎÄ¼ş)ÒÔ¼°ldapsam¡£
+	éªŒè¯æ–¹å¼ï¼š
+		1ã€shareï¼šåŒ¿åè®¿é—®ï¼Œå®‰å…¨æ€§ä¸é«˜(æ³¨æ„ï¼šsecurity=share,å¯åŠ¨æœåŠ¡æ—¶ä¼šå¤±è´¥ï¼Œè¿™ç§æ–¹å¼åªèƒ½åœ¨samba4.0ç‰ˆæœ¬ä»¥å‰ä½¿ç”¨ã€‚åœ¨4.0ç‰ˆæœ¬ä¸­å¢åŠ äº†å®‰å…¨å±æ€§ï¼Œä¸æ”¯æŒåŒ¿åç™»å½•ã€‚ä¸è®¸é€šè¿‡map to guestæ¥å®ç°ã€‚security = user ,map to guest = Bad User)
+		2ã€user:  ç”¨æˆ·å¿…é¡»æä¾›è´¦å·å’Œå¯†ç ç™»é™†ï¼Œæœ¬åœ°éœ€è¦æä¾›è´¦å·å¯†ç çš„æ•°æ®åº“
+		3ã€server: é€šè¿‡ldapç­‰æœåŠ¡å™¨çš„è®¤è¯
+passdb backend = tdbsam  ç”¨æˆ·åå°çš„æ•°æ®åº“ã€‚é€šå¸¸æœ‰tdbsamï¼ˆåœ¨/etc/sambaç›®å½•ä¸‹æœ‰æ•°æ®æ–‡ä»¶passwd.dbï¼‰ã€smbpasswd(åœ¨/etc/sambaç›®å½•ä¸‹æœ‰æ–‡ä»¶)ä»¥åŠldapsamã€‚
 
-´òÓ¡»úµÄÉèÖÃ£º
-load printers = yes  ÊÇ·ñÔÚÆô¶¯sambaÊ±×Ô¶¯Æô¶¯´òÓ¡»ú
-cups options = raw   ´òÓ¡»úµÄ¹²ÏíÅäÖÃÈ¨ÏŞ
-printcap name = /etc/printcap ´òÓ¡»úµÄÃû³Æ
+æ‰“å°æœºçš„è®¾ç½®ï¼š
+load printers = yes  æ˜¯å¦åœ¨å¯åŠ¨sambaæ—¶è‡ªåŠ¨å¯åŠ¨æ‰“å°æœº
+cups options = raw   æ‰“å°æœºçš„å…±äº«é…ç½®æƒé™
+printcap name = /etc/printcap æ‰“å°æœºçš„åç§°
 
-ÎÄ¼ş¹²ÏíÅäÖÃ£º
-[homes]       Éè¶¨¹²ÏíÄ¿Â¼
-	commnent = Home Directories   ¶Ô¹²ÏíµÄÃèÊöĞÅÏ¢
-	browseable = no               ÊÇ·ñÔÊĞíä¯ÀÀ
-	writable = yes                ÊÇ·ñÔÊĞíĞ´Èë
-	path = /var/spool/samba       Ö¸¶¨¹²ÏíµÄÂ·¾¶
-	guest ok = yes                ÊÇ·ñÔÊĞíÄäÃûÓÃ»§·ÃÎÊ
-	share modes = no              ¹²ÏíµÄÄ£Ê½
-	public = yes                  ÊÇ·ñÔÊĞí¹«¿ª·ÃÎÊ
-	printable = no                ÊÇ·ñÔÊĞíÊ¹ÓÃ´òÓ¡ 
-	write list = tom (+staff)     Ğ´ÈëÁĞ±í,ÎŞ+ÊÇÈË£¬ÓĞ+Îª×é
+æ–‡ä»¶å…±äº«é…ç½®ï¼š
+[homes]       è®¾å®šå…±äº«ç›®å½•
+	commnent = Home Directories   å¯¹å…±äº«çš„æè¿°ä¿¡æ¯
+	browseable = no               æ˜¯å¦å…è®¸æµè§ˆ
+	writable = yes                æ˜¯å¦å…è®¸å†™å…¥
+	path = /var/spool/samba       æŒ‡å®šå…±äº«çš„è·¯å¾„
+	guest ok = yes                æ˜¯å¦å…è®¸åŒ¿åç”¨æˆ·è®¿é—®
+	share modes = no              å…±äº«çš„æ¨¡å¼
+	public = yes                  æ˜¯å¦å…è®¸å…¬å¼€è®¿é—®
+	printable = no                æ˜¯å¦å…è®¸ä½¿ç”¨æ‰“å° 
+	write list = tom (+staff)     å†™å…¥åˆ—è¡¨,æ— +æ˜¯äººï¼Œæœ‰+ä¸ºç»„
 	
-testparm      ¼ì²âsmb.confÅäÖÃÎÄ¼şµÄÓï·¨µÄ¹¤¾ß
+testparm      æ£€æµ‹smb.confé…ç½®æ–‡ä»¶çš„è¯­æ³•çš„å·¥å…·
 ==============================================================
-useradd -s /sbin/nologin tom    ´´½¨Ò»¸öµÇÂ¼samba·şÎñµÄÕË»§£¬µ«²»ÄÜµÇÂ¼±¾µØshell
-pdbedit -a -t tom    ¸øtomÌí¼ÓsambaµÄÃÜÂë
-smbpasswd -a tom     ¸øtomÌí¼ÓsambaµÄÃÜÂë
+useradd -s /sbin/nologin tom    åˆ›å»ºä¸€ä¸ªç™»å½•sambaæœåŠ¡çš„è´¦æˆ·ï¼Œä½†ä¸èƒ½ç™»å½•æœ¬åœ°shell
+pdbedit -a -t tom    ç»™tomæ·»åŠ sambaçš„å¯†ç 
+smbpasswd -a tom     ç»™tomæ·»åŠ sambaçš„å¯†ç 
 
-windows·ÃÎÊ£º
+windowsè®¿é—®ï¼š
 \\samba.examaple.com
 
-Linux·ÃÎÊ£º
+Linuxè®¿é—®ï¼š
 smbclient -L //samba.example.com
 
 
-¿Í»§¶Ë¹ÒÔØsamba¹²ÏíĞèÒªÏÈ°²×°cifs-utils
+å®¢æˆ·ç«¯æŒ‚è½½sambaå…±äº«éœ€è¦å…ˆå®‰è£…cifs-utils
 yum install cifs-utils
 
-¹ÒÔØ
-mount //192.168.0.18/finance /media/samba -o username=user1
-»òÕßÔÚ/etc/fstabÖĞÌí¼Ó£º
+æŒ‚è½½
+mount //192.168.0.18/finance /media/samba -o username=user1     #finaceæ˜¯å…±äº«ç›®å½•çš„åå­— [homes]
+æˆ–è€…åœ¨/etc/fstabä¸­æ·»åŠ ï¼š
 //192.168.0.18/finance /media/samba cifs credentials=/media/samba/.smbcredentials,defaults 0 0
 
-±à¼­¹²ÏíµÄÕË»§ºÍÃÜÂë£º
+ç¼–è¾‘å…±äº«çš„è´¦æˆ·å’Œå¯†ç ï¼š
 vim ~/.smbcredentials
 username=user1
 password=PasswordForUser1
 ==============================================================
-·À»ğÇ½·ÅĞĞ
+é˜²ç«å¢™æ”¾è¡Œ
 firewall-cmd --add-service=samba
 
-Selinux ÉèÖÃ
+Selinux è®¾ç½®
 setsebool -P samba_domain_controller on                     : allow Samba to use the useradd and groupadd family of binaries.
-setsebool -P samba_enable_home_dirs on                      £ºshare home directories via Samba.
+setsebool -P samba_enable_home_dirs on                      ï¼šshare home directories via Samba.
 chcon -t samba_share_t /path/to/directory 
 semanage -a -t samba_share_t '/path/to/directory(/.*)?')    : allow Samba to read and write to the new directory.
 setsebool -P samba_export_all_ro(rw) on                     : to share such directories and allow read and write permissions.
 ===========================================================
-°²È«ĞÔÉèÖÃ
+å®‰å…¨æ€§è®¾ç½®
 
-Èç¹ûÒªÈÃÓÃ»§ÄÜ¹»ÓµÓĞĞ´ÈëÈ¨ÏŞ£¬ÄÇÃ´ĞèÒª±£Ö¤¸Ã¹²ÏíÎÄ¼ş¼ĞĞèÒªÓĞwÈ¨ÏŞ¡£
+å¦‚æœè¦è®©ç”¨æˆ·èƒ½å¤Ÿæ‹¥æœ‰å†™å…¥æƒé™ï¼Œé‚£ä¹ˆéœ€è¦ä¿è¯è¯¥å…±äº«æ–‡ä»¶å¤¹éœ€è¦æœ‰wæƒé™ã€‚
 
-Ê¹ÓÃbrowseable = no ,ÄÇÃ´¿Í»§¶ËÔÚ·ÃÎÊÊ±¿´²»µ½¹²ÏíÄ¿Â¼£¬µ«ÊÇÔÚ¹²ÏíµØÖ·ºó¼ÓÉÏ¹²ÏíÄ¿Â¼µÄÂ·¾¶¼´¿É·ÃÎÊ£¬Àı£º\\samba.example.com\MOVIE
+ä½¿ç”¨browseable = no ,é‚£ä¹ˆå®¢æˆ·ç«¯åœ¨è®¿é—®æ—¶çœ‹ä¸åˆ°å…±äº«ç›®å½•ï¼Œä½†æ˜¯åœ¨å…±äº«åœ°å€ååŠ ä¸Šå…±äº«ç›®å½•çš„è·¯å¾„å³å¯è®¿é—®ï¼Œä¾‹ï¼š\\samba.example.com\MOVIE
 
-¸ù¾İµÇÂ¼µÄ²»Í¬µÄÓÃ»§£¬Ê¹ÓÃ²»Í¬µÄÅäÖÃÎÄ¼ş£¬¿´µ½²»Í¬µÄÄÚÈİ£º
+æ ¹æ®ç™»å½•çš„ä¸åŒçš„ç”¨æˆ·ï¼Œä½¿ç”¨ä¸åŒçš„é…ç½®æ–‡ä»¶ï¼Œçœ‹åˆ°ä¸åŒçš„å†…å®¹ï¼š
 [global]
-config file = /etc/samba/smb.conf.%U   (%U±íÊ¾¸ù¾İÓÃ»§Ãû×Ô¶¯²éÕÒ)
+config file = /etc/samba/smb.conf.%U   (%Uè¡¨ç¤ºæ ¹æ®ç”¨æˆ·åè‡ªåŠ¨æŸ¥æ‰¾)
 cp /etc/samba/smb.conf.example /etc/samba/smb.conf.tom
 ===========================================================
-samba ´î½¨PDC  Óë ¼ÓÈëÓò£¨¿ÉÒÔÊµÏÖ£¬µ«Éú²ú»·¾³²»½¨ÒéÕâÃ´×ö£©
+samba æ­å»ºPDC  ä¸ åŠ å…¥åŸŸï¼ˆå¯ä»¥å®ç°ï¼Œä½†ç”Ÿäº§ç¯å¢ƒä¸å»ºè®®è¿™ä¹ˆåšï¼‰
 vim /etc/samba/smb.conf
 --Domain Controller Option--
 security = user 
 passdb backend = tdbsam
-domain master = yes    ½«samba·şÎñÆ÷¶¨ÒåÎªÖ÷Óò·şÎñÆ÷
+domain master = yes    å°†sambaæœåŠ¡å™¨å®šä¹‰ä¸ºä¸»åŸŸæœåŠ¡å™¨
 domain logons = yes 
 logon script = start.bat
-logon path =\\%N\%U\profile      %N±íÊ¾IP£¬%U±íÊ¾ÓÃ»§
+logon path =\\%N\%U\profile      %Nè¡¨ç¤ºIPï¼Œ%Uè¡¨ç¤ºç”¨æˆ·
 
 --Browser Controller Option--
-local master = yes        ÊÇ·ñ±¾µØÊÇÖ÷Óò·şÎñÆ÷
-os level = 100            ¼¶±ğ          
+local master = yes        æ˜¯å¦æœ¬åœ°æ˜¯ä¸»åŸŸæœåŠ¡å™¨
+os level = 100            çº§åˆ«          
 preferred master = yes
-wins support = yes        Ê¹ÓÃwindows ¿Í»§¶Ë£¬¿É¿ªÆô
+wins support = yes        ä½¿ç”¨windows å®¢æˆ·ç«¯ï¼Œå¯å¼€å¯
 
 
 mkdir /home/samba/
@@ -116,14 +116,14 @@ vim /home/samba/netlogon/start.bat
 	net use c: /home  
 unix2dos /home/samba/netlogon/start.bat 
 
-pdbedit -a -t root             Ìí¼ÓÓòÓÃ»§
+pdbedit -a -t root             æ·»åŠ åŸŸç”¨æˆ·
 useradd -M -d /dev/null -s /sbin/nologin test
-smbpasswd -m -a test$                    ±íÊ¾½«¿Í»§¶Ë¼ÆËã»ú¼ÓÈëÓò,$±íÊ¾Ö÷»ú
+smbpasswd -m -a test$                    è¡¨ç¤ºå°†å®¢æˆ·ç«¯è®¡ç®—æœºåŠ å…¥åŸŸ,$è¡¨ç¤ºä¸»æœº
 systemctl restart smb nmb 
 
-Èç¹û·ÃÎÊ²»µ½£¬ÔÚdns·şÎñÆ÷ÀïÌí¼Ó¶Ôexample.comµÄ½âÎö¡£
+å¦‚æœè®¿é—®ä¸åˆ°ï¼Œåœ¨dnsæœåŠ¡å™¨é‡Œæ·»åŠ å¯¹example.comçš„è§£æã€‚
 =====================================================================================
-ÓÃSamba´î½¨PDC²Î¿¼
+ç”¨Sambaæ­å»ºPDCå‚è€ƒ
 Setting Up Samba Primary Domain Controller On CentOS 7
 http://www.unixmen.com/setting-samba-primary-domain-controller-centos-7/
 =====================================================================================
